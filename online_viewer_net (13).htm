@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giant Numbers Adventure (Math 5.1)</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Configure Inter Font -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f7f7;
+            transition: background-color 0.5s ease;
+        }
+        .slide {
+            min-height: calc(100vh - 80px); /* Adjust for header/nav */
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+            display: none;
+            padding-bottom: 80px; /* Space for bottom navigation */
+        }
+        .slide.active {
+            display: flex;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .card {
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e0e0e0;
+        }
+        .btn-nav {
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .btn-nav:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(79, 70, 229, 0.4);
+        }
+        .bg-gradient-math {
+            background: linear-gradient(135deg, #4f46e5 0%, #a78bfa 100%);
+        }
+        .quiz-option {
+            transition: all 0.15s;
+            cursor: pointer;
+        }
+        .quiz-option:hover:not(.disabled) {
+            background-color: #eef2ff;
+        }
+        .correct-answer {
+            background-color: #d1fae5; /* Green */
+            border-color: #10b981;
+        }
+        .wrong-answer {
+            background-color: #fee2e2; /* Red */
+            border-color: #ef4444;
+        }
+    </style>
+</head>
+<body class="selection:bg-indigo-300 selection:text-indigo-900">
+
+    <!-- Header / Main Title -->
+    <header class="bg-gradient-math text-white p-4 shadow-lg sticky top-0 z-10">
+        <h1 class="text-2xl font-bold text-center">Giant Numbers Adventure (Math 5.1)</h1>
+        <div id="slide-info" class="text-center text-sm mt-1 opacity-75"></div>
+    </header>
+
+    <!-- Content Slide Container -->
+    <main class="container mx-auto p-4 md:p-8">
+
+        <!-- Slide 1: Introduction & Adventure -->
+        <section id="slide-1" class="slide active flex-col justify-center items-center text-center">
+            <div class="max-w-3xl w-full p-8 card bg-white rounded-xl">
+                <img src="https://placehold.co/600x350/6366f1/ffffff?text=Number+Explorer" alt="Explorer searching number codes" class="rounded-lg mb-6 mx-auto shadow-md max-w-full h-auto">
+                <h2 class="text-4xl font-extrabold text-indigo-700 mb-4">Hello, Arkan! Ready for a Number Adventure?</h2>
+                <p class="text-xl text-gray-700 mb-4">Good morning! Today we will explore the world of <strong>giant numbers</strong>.</p>
+                <p class="text-lg text-gray-700">Have you ever imagined how big the numbers around us are? We'll crack the 'code' of large numbers together.</p>
+                <p class="text-sm text-gray-500 mt-4">Let's start with a little warm-up puzzle!</p>
+            </div>
+        </section>
+
+        <!-- Slide 2: Warm-up Riddle -->
+        <section id="slide-2" class="slide flex-col justify-center items-center text-center">
+            <div class="max-w-2xl w-full p-8 card bg-yellow-50 rounded-xl border-yellow-300">
+                <h2 class="text-3xl font-bold text-yellow-800 mb-6">Number Riddle: Who Am I?</h2>
+                <div class="text-left text-xl space-y-3 mb-6 bg-yellow-100 p-6 rounded-lg border-l-4 border-yellow-500">
+                    <p>• I am a <strong>7-digit number</strong>.</p>
+                    <p>• My tens digit is <strong>5</strong>.</p>
+                    <p>• My hundred thousands digit is <strong>3</strong>.</p>
+                    <p>• My millions digit is <strong>8</strong>.</p>
+                    <p>• All my other digits are <strong>0</strong>.</p>
+                </div>
+                <p class="text-2xl font-bold text-indigo-600">Who am I, Arkan? <span id="riddle-answer" class="text-red-500">...?</span></p>
+                <button onclick="revealRiddleAnswer()" class="mt-4 px-6 py-2 bg-indigo-600 text-white font-semibold rounded-full hover:bg-indigo-700 transition duration-300">Reveal Answer</button>
+            </div>
+        </section>
+
+        <!-- Slide 3: Real-World Context (Population & Debt) -->
+        <section id="slide-3" class="slide flex-col justify-center items-center text-center">
+            <div class="max-w-3xl w-full p-8 card bg-white rounded-xl">
+                <h2 class="text-3xl font-bold text-indigo-700 mb-4">Reading Big Numbers in the Real World</h2>
+                <img src="https://placehold.co/600x350/9333ea/ffffff?text=Digital+Data+Globe" alt="Digital data on a screen" class="rounded-lg mb-6 mx-auto shadow-md max-w-full h-auto">
+                <div class="text-left text-lg space-y-3">
+                    <p>Indonesia's population reaches about <strong>280 million</strong> people. Do you know how to read the number <strong>280,000,000</strong> correctly?</p>
+                    <p>Our national debt can reach <strong>'eight thousand trillion rupiah'</strong>. These numbers look enormous, don't they?</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 4: Importance of Big Numbers (FIXED) -->
+        <section id="slide-4" class="slide flex-col justify-center items-center text-center">
+            <div class="max-w-3xl w-full p-8 card bg-white rounded-xl">
+                <h2 class="text-3xl font-bold text-indigo-700 mb-4">Why is it Important to Understand Giant Numbers?</h2>
+                <ul class="text-xl text-left space-y-3 mx-auto max-w-xl">
+                    <li class="p-2 bg-indigo-50 rounded-md">Big numbers help us <strong>understand the world</strong>, from the number of stars in a galaxy to economic data.</li>
+                    <li class="p-2 bg-indigo-50 rounded-md">Reading and writing them correctly is an <strong>essential skill</strong>.</li>
+                    <li class="p-2 bg-indigo-50 rounded-md">This will help you in other math lessons and in <strong>everyday life</strong>!</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Slide 5: Key: Place Value Concept (FIXED) -->
+        <section id="slide-5" class="slide flex-col justify-center items-center text-center">
+            <div class="max-w-3xl w-full p-8 card bg-white rounded-xl">
+                <h2 class="text-3xl font-bold text-indigo-700 mb-4">The Key: Place Value</h2>
+                <img src="https://placehold.co/600x350/1e40af/ffffff?text=Magnifying+Glass+on+Number+9" alt="Magnifying glass on a number" class="rounded-lg mb-6 mx-auto shadow-md max-w-full h-auto">
+                <div class="text-left text-lg space-y-3">
+                    <p>Every digit in a number has a unique <strong>'place value'</strong>.</p>
+                    <p>Place value tells us how <strong>'valuable'</strong> a digit is.</p>
+                    <p>For example, the digit '5' in <strong>50</strong> is different from the digit '5' in <strong>500</strong>.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 6: Review: Ones, Tens, Hundreds -->
+        <section id="slide-6" class="slide flex-col justify-center items-center text-center">
+            <div class="max-w-3xl w-full p-8 card bg-white rounded-xl">
+                <h2 class="text-3xl font-bold text-indigo-700 mb-4">Reviewing Place Value: Ones, Tens, Hundreds</h2>
+                <div class="text-left text-lg space-y-3 mx-auto max-w-xl">
+                    <p>We start from the simplest:</p>
+                    <p class="font-semibold text-blue-600">1. Far right is <strong>Ones</strong> (e.g., 7).</p>
+                    <p class="font-semibold text-green-600">2. Next is <strong>Tens</strong> (e.g., 70, the 7 means 7 tens).</p>
+                    <p class="font-semibold text-red-600">3. Then comes <strong>Hundreds</strong> (e.g., 700, the 7 means 7 hundreds).</p>
+                    <p class="mt-4 italic text-sm">These are our basic building blocks.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 7: Group 1: Thousands (Units) (FIXED) -->
+        <section id="slide-7" class="slide flex-col justify-center items-center text-center">
+            <div class="max-w-3xl w-full p-8 card bg-white rounded-xl">
+                <h2 class="text-3xl font-bold text-indigo-700 mb-4">First Group: The Thousands Family</h2>
+                <img src="https://placehold.co/600x250/10b981/ffffff?text=Thousands+House+Diagram" alt="Place value diagram" class="rounded-lg mb-6 mx-auto shadow-md max-w-full h-auto">
+                <div class="text-left text-lg space-y-3">
+                    <p>After the hundreds, we enter the 'family' of <strong>Thousands</strong>.</p>
+                    <p>Just like before, we have:</p>
+                    <ul class="list-disc list-inside ml-4 font-semibold">
+                        <li><strong>Thousands</strong> (e.g., 1,000)</li>
+                        <li><strong>Ten Thousands</strong> (e.g., 10,000)</li>
+                        <li><strong>Hundred Thousands</strong> (e.g., 100,000)</li>
+                    </ul>
+                    <div class="bg-blue-50 p-3 rounded-md mt-4 font-semibold text-blue-800">
+                        Example: <strong>1,234</strong> is read as 'One thousand two hundred thirty-four'.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 8: The Three-Digit Pattern (Visual) -->
+        <section id="slide-8" class="slide flex-col justify-center items-center text-center">
+            <div class="max-w-3xl w-full p-8 card bg-white rounded-xl">
+                <h2 class="text-3xl font-bold text-indigo-700 mb-4">The Pattern of Three-Digit Groups</h2>
+                <p class="text-xl text-gray-700 mb-6">Notice, Arkan, every three digits from the right forms a <strong>group</strong>.</p>
+                <div class="bg-indigo-50 p-6 rounded-lg border border-indigo-200">
+                    <div class="text-4xl font-mono font-bold text-gray-900 flex justify-center space-x-2">
+                        <span>123</span>
+                        <span class="text-gray-400">,</span>
+                        <span class="text-green-600">456</span>
+                        <span class="text-gray-400">,</span>
+                        <span class="text-yellow-600">789</span>
+                    </div>
+                    <div class="flex justify-center text-sm font-semibold mt-2 space-x-2">
+                        <span class="p-1 rounded-md text-indigo-700 bg-indigo-200">MILLIONS</span>
+                        <span class="p-1 rounded-md text-green-700 bg-green-200">THOUSANDS</span>
+                        <span class="p-1 rounded-md text-yellow-700 bg-yellow-200">UNITS</span>
+                    </div>
+                </div>
+                <p class="text-sm text-gray-500 mt-6">We separate these groups with a comma (or sometimes a period) to make them easier to read.</p>
+            </div>
+        </section>
+
+        <!-- Slide 9: Example: 1,234,567 - Setup (FIXED) -->
+        <section id="slide-9" class="slide flex-col justify-center items-center text-center">
+            <div class="max-w-3xl w-full p-8 card bg-white rounded-xl">
+                <h2 class="text-3xl font-bold text-indigo-700 mb-4">Example: 1,234,567</h2>
+                <div class="text-left text-lg space-y-4 mx-auto max-w-lg">
+                    <p class="p-2 bg-yellow-100 rounded-md">The digits <strong class="font-mono text-yellow-700">'567'</strong> are the <strong class="text-yellow-700">Units</strong> group.</p>
+                    <p class="p-2 bg-green-100 rounded-md">The digits <strong class="font-mono text-green-700">'234'</strong> are the <strong class="text-green-700">Thousands</strong> group.</p>
+                    <p class="p-2 bg-indigo-100 rounded-md">The digit <strong class="font-mono text-indigo-700">'1'</strong> stands alone in the <strong class="text-indigo-700">Millions</strong> place.</p>
+                    <div class="mt-6 text-2xl font-bold text-gray-800">
+                        How will Arkan read it? <span class="text-red-600">One million, two hundred thirty-four thousand, five hundred sixty-seven.</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 10: Group 2: Millions ($\times 10^6$) (FIXED) -->
+        <section id="slide-10" class="slide flex-col justify-center items-center text-center">
+            <div class="max-w-3xl w-full p-8 card bg-white rounded-xl">
+                <h2 class="text-3xl font-bold text-indigo-700 mb-4">Introducing Millions ($\times 10^6$)</h2>
+                <img src="https://placehold.co/600x350/f97316/ffffff?text=Big+Number+12,345,678" alt="Cartoon character pointing at 12 million" class="rounded-lg mb-6 mx-auto shadow-md max-w-full h-auto">
+                <div class="text-left text-lg space-y-3">
+                    <p>After thousands, we level up to <strong>Millions</strong>!</p>
+                    <p>The third group from the right is the <strong>Millions</strong> group.</p>
+                    <ul class="list-disc list-inside ml-4">
+                        <li>Million</li>
+                        <li>Ten Million</li>
+                        <li>Hundred Million</li>
+                    </ul>
+                    <div class="bg-indigo-100 p-3 rounded-md mt-4 font-semibold text-indigo-800">
+                        Example: <strong>15,000,000</strong> is read as 'Fifteen million'.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 11: Reading Millions: 280,000,000 (FIXED) -->
+        <section id="slide-11" class="slide flex-col justify-center items-center text-center">
+            <div class="max-w-3xl w-full p-8 card bg-white rounded-xl">
+                <h2 class="text-3xl font-bold text-indigo-700 mb-4">Reading Millions: The 280,000,000 Challenge</h2>
+                <p class="text-xl text-gray-700 mb-6">Let's break down Indonesia's population number.</p>
+                <div class="text-left text-lg space-y-4">
+                    <p class="p-2 bg-yellow-100 rounded-md">1. First Group (Right): <strong class="font-mono">'000'</strong> (<strong class="text-yellow-700">Units</strong>)</p>
+                    <p class="p-2 bg-green-100 rounded-md">2. Second Group: <strong class="font-mono">'000'</strong> (<strong class="text-green-700">Thousands</strong>)</p>
+                    <p class="p-2 bg-indigo-100 rounded-md">3. Third Group: <strong class="font-mono">'280'</strong> (<strong class="text-indigo-700">Millions</strong>)</p>
+                    <div class="mt-6 text-2xl font-bold text-gray-800 text-center bg-green-200 p-4 rounded-lg">
+                        It is read as: <strong>Two hundred eighty million</strong>.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 12: Practice: Millions -->
+        <section id="slide-12" class="slide flex-col justify-center items-center text-center">
+            <div class="max-w-3xl w-full p-8 card bg-white rounded-xl">
+                <h2 class="text-3xl font-bold text-indigo-700 mb-6">Quick Practice: Millions</h2>
+                <div class="text-left text-xl space-y-4 mx-auto max-w-lg">
+                    <p class="p-3 bg-gray-100 rounded-md">Try reading this number: <strong>5,432,100</strong></p>
+                    <p class="p-3 bg-gray-100 rounded-md">How about this one: <strong>27,654,321</strong></p>
+                </div>
+                <p class="text-sm text-gray-500 mt-6">Remember to think about the three-digit groups!</p>
+            </div>
+        </section>
+
+        <!-- Slide 13: Practice: Millions -->
+        <section id="slide-13" class="slide flex-col justify-center items-center text-center">
+            <div class="max-w-3xl w-full p-8 card bg-white rounded-xl">
+                <h2 class="text-3xl font-bold text-indigo-700 mb-6">Practice: Hundred Millions</h2>
+                <div class="text-left text-xl space-y-4 mx-auto max-w-lg">
+                    <p class="p-4 bg-purple-100 rounded-lg font-bold text-purple-800 text-center">Read: <strong>987,000,000</strong></p>
+                </div>
+                <div class="mt-6 text-2xl font-bold text-gray-800 text-center">
+                    Answer: <span class="text-red-600">Nine hundred eighty-seven million.</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 14: Group 3: Billions ($\times 10^9$) (FIXED) -->
+        <section id="slide-14" class="slide flex-col justify-center items-center text-center">
+            <div class="max-w-3xl w-full p-8 card bg-white rounded-xl">
+                <h2 class="text-3xl font-bold text-indigo-700 mb-4">Next Up: Billions! ($\times 10^9$)</h2>
+                <p class="text-xl text-gray-700 mb-6">We keep getting bigger! Now, let's meet the <strong>Billions</strong>.</p>
+                <div class="text-left text-lg space-y-3 mx-auto max-w-lg">
+                    <p class="p-2 bg-green-100 rounded-md">The <strong>fourth group</strong> from the right is the <strong>Billions</strong> group.</p>
+                    <p>It's an enormous number, often found in economic news or government budgets.</p>
+                    <ul class="list-disc list-inside ml-4">
+                        <li>Billion</li>
+                        <li>Ten Billion</li>
+                        <li>Hundred Billion</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 15: Reading Billions: 3,500,000,000 (FIXED) -->
+        <section id="slide-15" class="slide flex-col justify-center items-center text-center">
+            <div class="max-w-3xl w-full p-8 card bg-white rounded-xl">
+                <h2 class="text-3xl font-bold text-indigo-700 mb-4">Reading Billions: Example</h2>
+                <p class="text-xl text-gray-700 mb-6">Look at the number: <strong>3,500,000,000</strong></p>
+                <div class="text-left text-lg space-y-4">
+                    <p class="p-2 bg-yellow-100 rounded-md">Groups: Units <strong class="font-mono">('000')</strong>, Thousands <strong class="font-mono">('000')</strong>, Millions <strong class="font-mono">('000')</strong>, <strong class="text-red-700">Billions ('3')</strong> and Millions <strong class="font-mono">('500')</strong>.</p>
+                    <div class="mt-6 text-2xl font-bold text-gray-800 text-center bg-red-200 p-4 rounded-lg">
+                        It is read as: <strong>Three billion five hundred million</strong>.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 16: Practice: Billions -->
+        <section id="slide-16" class="slide flex-col justify-center items-center text-center">
+            <div class="max-w-3xl w-full p-8 card bg-white rounded-xl">
+                <h2 class="text-3xl font-bold text-indigo-700 mb-6">Practice Reading Billions</h2>
+                <div class="text-left text-xl space-y-4 mx-auto max-w-lg">
+                    <p class="p-3 bg-gray-100 rounded-md">Read: <strong>12,000,000,000</strong></p>
+                    <p class="p-3 bg-gray-100 rounded-md">Read: <strong>456,789,012,345</strong></p>
+                </div>
+                <p class="text-sm text-gray-500 mt-6">Don't forget to look at the three-digit groups!</p>
+            </div>
+        </section>
+
+        <!-- Slide 17: Group 4: Trillions ($\times 10^{12}$) (FIXED) -->
+        <section id="slide-17" class="slide flex-col justify-center items-center text-center">
+            <div class="max-w-3xl w-full p-8 card bg-white rounded-xl">
+                <h2 class="text-3xl font-bold text-indigo-700 mb-4">The Peak: Trillions! ($\times 10^{12}$)</h2>
+                <p class="text-xl text-gray-700 mb-6">This is the peak! We will now understand <strong>Trillions</strong>.</p>
+                <div class="text-left text-lg space-y-3 mx-auto max-w-lg">
+                    <p class="p-2 bg-red-100 rounded-md"><strong>Trillions</strong> are the <strong>fifth group</strong> from the right.</p>
+                    <p>This number is incredibly large. It's used for things like national debt or interstellar distances.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 18: Reading Trillions: 8,000,000,000,000 (FIXED) -->
+        <section id="slide-18" class="slide flex-col justify-center items-center text-center">
+            <div class="max-w-3xl w-full p-8 card bg-white rounded-xl">
+                <h2 class="text-3xl font-bold text-indigo-700 mb-4">Reading Trillions: National Debt</h2>
+                <p class="text-xl text-gray-700 mb-6">Remember the national debt of '8 thousand trillion rupiah'?</p>
+                <p class="text-3xl font-mono font-bold text-gray-900 mb-4"><strong>8,000,000,000,000</strong></p>
+                <div class="text-left text-lg space-y-4">
+                    <p class="p-2 bg-yellow-100 rounded-md">Groups: Units, Thousands, Millions, Billions, and <strong class="text-blue-700">Trillions ('8')</strong>.</p>
+                    <div class="mt-6 text-2xl font-bold text-gray-800 text-center bg-blue-200 p-4 rounded-lg">
+                        It is read as: <strong>Eight trillion</strong>.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 19: Practice: Trillions -->
+        <section id="slide-19" class="slide flex-col justify-center items-center text-center">
+            <div class="max-w-3xl w-full p-8 card bg-white rounded-xl">
+                <h2 class="text-3xl font-bold text-indigo-700 mb-6">Practice Reading Trillions</h2>
+                <div class="text-left text-xl space-y-4 mx-auto max-w-lg">
+                    <p class="p-3 bg-gray-100 rounded-md">Read: <strong>1,000,000,000,000</strong></p>
+                    <p class="p-3 bg-gray-100 rounded-md">Read: <strong>23,456,789,012,345</strong></p>
+                </div>
+                <p class="text-lg text-indigo-600 mt-6">You are getting proficient at reading large numbers!</p>
+            </div>
+        </section>
+
+        <!-- Slide 20: Transition: Number to Word -->
+        <section id="slide-20" class="slide flex-col justify-center items-center text-center">
+            <div class="max-w-3xl w-full p-8 card bg-white rounded-xl">
+                <h2 class="text-3xl font-bold text-indigo-700 mb-4">Transition: From Number to Word</h2>
+                <img src="https://placehold.co/600x300/ec4899/ffffff?text=Typewriter+with+Words+and+Numbers" alt="Typewriter writing numbers as words" class="rounded-lg mb-6 mx-auto shadow-md max-w-full h-auto">
+                <p class="text-xl text-gray-700 mb-4">Now, we will try the reverse. You will convert numbers into written words.</p>
+                <h3 class="text-2xl font-semibold text-gray-800 mb-4">Practice: Writing Thousands</h3>
+                <div class="text-left text-lg space-y-3 mx-auto max-w-md">
+                    <p>Write in words: <strong>7,250</strong></p>
+                    <p>Write in words: <strong>567,890</strong></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 21: Practice: Writing Millions -->
+        <section id="slide-21" class="slide flex-col justify-center items-center text-center">
+            <div class="max-w-3xl w-full p-8 card bg-white rounded-xl">
+                <h2 class="text-3xl font-bold text-indigo-700 mb-6">Practice: Writing Millions in Words</h2>
+                <div class="text-left text-xl space-y-4 mx-auto max-w-lg">
+                    <p class="p-3 bg-gray-100 rounded-md">Write in words: <strong>2,500,000</strong> (City population)</p>
+                    <p class="p-3 bg-gray-100 rounded-md">Write in words: <strong>15,932,000</strong></p>
+                </div>
+                <p class="text-sm text-gray-500 mt-6">Make sure you mention 'million' correctly in each group.</p>
+            </div>
+        </section>
+
+        <!-- Slide 22: Practice: Writing Billions -->
+        <section id="slide-22" class="slide flex-col justify-center items-center text-center">
+            <div class="max-w-3xl w-full p-8 card bg-white rounded-xl">
+                <h2 class="text-3xl font-bold text-indigo-700 mb-6">Practice: Writing Billions in Words</h2>
+                <div class="text-left text-xl space-y-4 mx-auto max-w-lg">
+                    <p class="p-3 bg-gray-100 rounded-md">Write in words: <strong>7,200,000,000</strong></p>
+                    <p class="p-3 bg-gray-100 rounded-md">Write in words: <strong>15,932,000,000</strong></p>
+                </div>
+                <p class="text-sm text-gray-500 mt-6">Pay attention to the 'billion' and 'million' groups!</p>
+            </div>
+        </section>
+
+        <!-- Slide 23: Practice: Writing Trillions -->
+        <section id="slide-23" class="slide flex-col justify-center items-center text-center">
+            <div class="max-w-3xl w-full p-8 card bg-white rounded-xl">
+                <h2 class="text-3xl font-bold text-indigo-700 mb-6">Practice: Writing Trillions in Words</h2>
+                <div class="text-left text-xl space-y-4 mx-auto max-w-lg">
+                    <p class="p-3 bg-gray-100 rounded-md">Write in words: <strong>1,000,000,000,000</strong></p>
+                    <p class="p-3 bg-gray-100 rounded-md">Write in words: <strong>50,312,008,000,000</strong></p>
+                </div>
+                <p class="text-sm text-gray-500 mt-6">This is a great challenge! Think about each group.</p>
+            </div>
+        </section>
+
+        <!-- Slide 24: Transition: Word to Number (The Detective) -->
+        <section id="slide-24" class="slide flex-col justify-center items-center text-center">
+            <div class="max-w-3xl w-full p-8 card bg-white rounded-xl">
+                <h2 class="text-3xl font-bold text-indigo-700 mb-4">Transition: From Word to Number</h2>
+                <img src="https://placehold.co/600x350/991b1b/ffffff?text=Number+Detective+with+Magnifying+Glass" alt="Detective looking for numbers" class="rounded-lg mb-6 mx-auto shadow-md max-w-full h-auto">
+                <p class="text-xl text-gray-700 mb-4">Now it's your turn to be the <strong>'Number Detective'</strong>!</p>
+                <p class="text-lg text-gray-700">Your task is to write the number from the word description. Use your mental place value chart as your 'key' to solving these mysteries.</p>
+            </div>
+        </section>
+
+        <!-- Slide 25: Writing Numbers: Thousands & Millions -->
+        <section id="slide-25" class="slide flex-col justify-center items-center text-center">
+            <div class="max-w-3xl w-full p-8 card bg-white rounded-xl">
+                <h2 class="text-3xl font-bold text-indigo-700 mb-4">Writing Numbers: Thousands and Millions</h2>
+                <h3 class="text-2xl font-semibold text-gray-800 mb-4">Thousands Practice:</h3>
+                <div class="text-left text-lg space-y-3 mx-auto max-w-lg mb-6 p-4 bg-yellow-50 rounded-md">
+                    <p>Write the number for: <strong>'Seven thousand twenty-five'</strong></p>
+                    <p>Write the number for: <strong>'Thirty-four thousand one hundred two'</strong></p>
+                </div>
+                <h3 class="text-2xl font-semibold text-gray-800 mb-4">Millions Practice:</h3>
+                <div class="text-left text-lg space-y-3 mx-auto max-w-lg p-4 bg-green-50 rounded-md">
+                    <p>Write the number for: <strong>'Five million two hundred thousand'</strong></p>
+                    <p>Write the number for: <strong>'Twenty-seven million fifteen thousand three hundred'</strong></p>
+                </div>
+                <p class="text-sm text-red-500 mt-4">Remember to fill empty place values with <strong>zeros</strong>.</p>
+            </div>
+        </section>
+
+        <!-- Slide 26: Writing Numbers: Billions & Trillions -->
+        <section id="slide-26" class="slide flex-col justify-center items-center text-center">
+            <div class="max-w-3xl w-full p-8 card bg-white rounded-xl">
+                <h2 class="text-3xl font-bold text-indigo-700 mb-4">Writing Numbers: Billions and Trillions</h2>
+                <h3 class="text-2xl font-semibold text-gray-800 mb-4">Billions Practice:</h3>
+                <div class="text-left text-lg space-y-3 mx-auto max-w-lg mb-6 p-4 bg-blue-50 rounded-md">
+                    <p>Write the number for: <strong>'Seven billion two hundred million'</strong></p>
+                    <p>Write the number for: <strong>'Five hundred twenty billion thirty-seven million one hundred four thousand'</strong></p>
+                </div>
+                <h3 class="text-2xl font-semibold text-gray-800 mb-4">Trillions Practice:</h3>
+                <div class="text-left text-lg space-y-3 mx-auto max-w-lg p-4 bg-red-50 rounded-md">
+                    <p>Write the number for: <strong>'One trillion two hundred billion'</strong></p>
+                    <p>Write the number for: <strong>'Fifty trillion three hundred twelve billion eight million'</strong></p>
+                </div>
+                <p class="text-lg text-indigo-600 mt-4">These are very big numbers! Excellent work, Arkan!</p>
+            </div>
+        </section>
+
+        <!-- Slide 27: Identifying Digit Value (FIXED) -->
+        <section id="slide-27" class="slide flex-col justify-center items-center text-center">
+            <div class="max-w-3xl w-full p-8 card bg-white rounded-xl">
+                <h2 class="text-3xl font-bold text-indigo-700 mb-4">Identifying Digit Value</h2>
+                <p class="text-xl text-gray-700 mb-6">Each digit has a unique value depending on its position.</p>
+                <div class="text-left text-lg space-y-3 mx-auto max-w-lg">
+                    <p>In <strong class="font-mono">3,456</strong>, the digit <strong>'4'</strong> is in the <strong>hundreds</strong> position, so its value is <strong>400</strong>.</p>
+                    <p>Now, try to identify the place value and value for the following numbers. This is key to understanding big numbers deeply.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 28: Practice: Digit Value in Billions/Trillions (Combined) (FIXED) -->
+        <section id="slide-28" class="slide flex-col justify-center items-center text-center">
+            <div class="max-w-3xl w-full p-8 card bg-white rounded-xl">
+                <h2 class="text-3xl font-bold text-indigo-700 mb-4">Practice: Digit Value in Billions and Trillions</h2>
+                <div class="text-left text-lg space-y-4 mx-auto max-w-lg p-4 bg-indigo-50 rounded-md">
+                    <h3 class="font-semibold text-xl text-indigo-800">In the number <strong class="font-mono">15,932,000,000</strong>:</h3>
+                    <p>1. What is the <strong>place value</strong> of the digit <strong>9</strong>?</p>
+                    <p>2. What is the <strong>value</strong> of the digit <strong>3</strong>?</p>
+                    <h3 class="font-semibold text-xl text-indigo-800 mt-4">In the number <strong class="font-mono">678,901,234,567,890</strong>:</h3>
+                    <p>3. What is the <strong>place value</strong> of the digit <strong>6</strong>?</p>
+                    <p>4. What is the <strong>value</strong> of the digit <strong>2</strong>?</p>
+                </div>
+                <p class="text-lg text-indigo-600 mt-6">You are getting sharper, Arkan!</p>
+            </div>
+        </section>
+
+        <!-- Slide 29: Comparing Giant Numbers -->
+        <section id="slide-29" class="slide flex-col justify-center items-center text-center">
+            <div class="max-w-3xl w-full p-8 card bg-white rounded-xl">
+                <h2 class="text-3xl font-bold text-indigo-700 mb-4">Comparing Giant Numbers</h2>
+                <div class="text-left text-xl space-y-4 mx-auto max-w-2xl p-6 bg-yellow-100 rounded-lg border-l-4 border-yellow-500">
+                    <p>Which number is larger:</p>
+                    <p class="font-mono font-bold text-3xl text-gray-900">A. 3,456,789,123</p>
+                    <p class="font-mono font-bold text-3xl text-gray-900">B. 3,456,789,023</p>
+                    <p class="text-sm text-gray-600 mt-4"><strong>Tip:</strong> Compare from left to right, group by group. These numbers are very close, so look carefully!</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 30: Real-World Application: Addition/Subtraction (2 problems) -->
+        <section id="slide-30" class="slide flex-col justify-center items-center text-center">
+            <div class="max-w-3xl w-full p-8 card bg-white rounded-xl">
+                <h2 class="text-3xl font-bold text-indigo-700 mb-4">Real-World Application: Finance Problems</h2>
+                <div class="text-left text-lg space-y-6 mx-auto max-w-xl">
+                    <h3 class="font-semibold text-xl text-green-700">Problem 1: Savings (Addition)</h3>
+                    <p class="p-3 bg-green-50 rounded-md">Muhammad Arkan has savings of <strong>Rp 15,000,000,000</strong>. If he saves another <strong>Rp 500,000,000</strong>, what is his total savings now?</p>
+                    <h3 class="font-semibold text-xl text-red-700">Problem 2: Company Profit (Subtraction)</h3>
+                    <p class="p-3 bg-red-50 rounded-md">A company recorded a profit of <strong>Rp 1,250,000,000,000</strong> this year. Last year, the profit was <strong>Rp 980,000,000,000</strong>. What is the increase in the company's profit?</p>
+                </div>
+                <p class="text-sm text-gray-500 mt-6">Imagine calculating these giant amounts!</p>
+            </div>
+        </section>
+
+        <!-- Slide 31: Future Math & Independent Practice Setup (FIXED) -->
+        <section id="slide-31" class="slide flex-col justify-center items-center text-center">
+            <div class="max-w-3xl w-full p-8 card bg-white rounded-xl">
+                <h2 class="text-3xl font-bold text-indigo-700 mb-4">Connecting to Future Mathematics</h2>
+                <p class="text-xl text-gray-700 mb-6">Understanding place value is a strong foundation.</p>
+                <div class="text-left text-lg space-y-3 mx-auto max-w-lg p-4 bg-blue-100 rounded-md">
+                    <p>It will help you in topics like <strong>Scientific Notation</strong> which is used for extremely large or extremely small numbers.</p>
+                    <p>These basics will help you in future math competitions and higher-level studies!</p>
+                </div>
+                <h3 class="text-2xl font-bold text-indigo-700 mt-8 mb-4">Independent Practice:</h3>
+                <p class="text-lg text-gray-700">Practice reading and writing these numbers (PDF Pages 36-38):</p>
+                <ul class="text-left text-lg mx-auto max-w-md list-disc list-inside mt-4">
+                    <li>Read aloud: <strong>98,765,432,109,876</strong></li>
+                    <li>Write the number for: <strong>'Thirty-four billion five hundred twelve million ninety thousand six hundred'</strong></li>
+                    <li>In <strong class="font-mono">123,456,789,012,345</strong>: What is the place value of <strong class="font-mono">4</strong>?</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Slide 32: Quick Recap, Reflection, & Next Task (FIXED) -->
+        <section id="slide-32" class="slide flex-col justify-center items-center text-center">
+            <div class="max-w-3xl w-full p-8 card bg-green-50 rounded-xl border-green-300">
+                <div class="text-6xl mb-4">🎉</div>
+                <h2 class="text-4xl font-extrabold text-green-700 mb-4">Quick Recap!</h2>
+                <ul class="text-left text-xl mx-auto max-w-sm space-y-2">
+                    <li class="flex items-start"><span class="text-green-500 mr-2">✔️</span> You learned to read and write numbers up to <strong>trillions</strong>.</li>
+                    <li class="flex items-start"><span class="text-green-500 mr-2">✔️</span> We use the <strong>three-digit group</strong> pattern (Thousands, Millions, Billions, Trillions).</li>
+                    <li class="flex items-start"><span class="text-green-500 mr-2">✔️</span> Understanding <strong>Place Value</strong> is the key.</li>
+                </ul>
+                <h3 class="text-2xl font-bold text-green-800 mt-6 mb-2">Reflection Moment:</h3>
+                <p class="text-lg text-gray-700">What was the most interesting thing you learned today? Are trillions less scary now?</p>
+                <p class="text-sm text-gray-500 mt-4">You have done a great job today, Arkan!</p>
+            </div>
+        </section>
+
+        <!-- Slide 33: QUIZ INTRO - Last 4 Slides -->
+        <section id="slide-33" class="slide flex-col justify-center items-center text-center">
+            <div class="max-w-2xl w-full p-8 card bg-indigo-600 text-white rounded-xl">
+                <h2 class="text-4xl font-extrabold mb-4">TIME FOR A QUIZ!</h2>
+                <p class="text-xl">The following <strong>4 slides</strong> will test your knowledge of large numbers.</p>
+                <p class="text-lg mt-4">Click the option you think is correct. Good luck!</p>
+                <div class="mt-4 text-3xl">🚀</div>
+            </div>
+        </section>
+
+        <!-- Slide 34: Quiz Q1 (Reading Trillions) -->
+        <section id="slide-34" class="slide flex-col justify-center items-center text-center">
+            <div class="max-w-3xl w-full p-8 card bg-white rounded-xl">
+                <h2 class="text-3xl font-bold text-indigo-700 mb-6">Quiz Question 1: Reading Large Numbers</h2>
+                <p class="text-xl mb-4">How do you read the number:</p>
+                <p class="font-mono font-bold text-4xl text-gray-900 mb-6"><strong>98,765,432,109,876</strong></p>
+                <div id="q1-options" class="text-left space-y-4">
+                    <div class="quiz-option p-4 border rounded-lg" data-answer="wrong" onclick="checkAnswer(1, this)">A. Ninety-eight billion, seven hundred sixty-five million...</div>
+                    <div class="quiz-option p-4 border rounded-lg" data-answer="wrong" onclick="checkAnswer(1, this)">B. Nine trillion, eight hundred seventy-six billion...</div>
+                    <div class="quiz-option p-4 border rounded-lg" data-answer="correct" onclick="checkAnswer(1, this)">C. Ninety-eight trillion, seven hundred sixty-five billion, four hundred thirty-two million...</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 35: Quiz Q2 (Writing Billions) -->
+        <section id="slide-35" class="slide flex-col justify-center items-center text-center">
+            <div class="max-w-3xl w-full p-8 card bg-white rounded-xl">
+                <h2 class="text-3xl font-bold text-indigo-700 mb-6">Quiz Question 2: Word to Number</h2>
+                <p class="text-xl mb-4">Write the number for the words:</p>
+                <p class="italic text-2xl text-gray-800 mb-6"><strong>'Thirty-four billion five hundred twelve million ninety thousand six hundred'</strong></p>
+                <div id="q2-options" class="text-left space-y-4">
+                    <div class="quiz-option p-4 border rounded-lg" data-answer="wrong" onclick="checkAnswer(2, this)">A. 34,512,900,600</div>
+                    <div class="quiz-option p-4 border rounded-lg" data-answer="correct" onclick="checkAnswer(2, this)">B. 34,512,090,600</div>
+                    <div class="quiz-option p-4 border rounded-lg" data-answer="wrong" onclick="checkAnswer(2, this)">C. 3,451,209,060,0</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 36: Quiz Q3 (Place Value ID) -->
+        <section id="slide-36" class="slide flex-col justify-center items-center text-center">
+            <div class="max-w-3xl w-full p-8 card bg-white rounded-xl">
+                <h2 class="text-3xl font-bold text-indigo-700 mb-6">Quiz Question 3: Place Value Identification</h2>
+                <p class="text-xl mb-4">In the number <strong>123,456,789,012,345</strong>, what is the <strong>PLACE VALUE</strong> of the digit <strong>4</strong>?</p>
+                <div id="q3-options" class="text-left space-y-4">
+                    <div class="quiz-option p-4 border rounded-lg" data-answer="wrong" onclick="checkAnswer(3, this)">A. Ten Billions</div>
+                    <div class="quiz-option p-4 border rounded-lg" data-answer="correct" onclick="checkAnswer(3, this)">B. Hundred Billions</div>
+                    <div class="quiz-option p-4 border rounded-lg" data-answer="wrong" onclick="checkAnswer(3, this)">C. Ten Trillions</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 37: Quiz Q4 (Comparison) -->
+        <section id="slide-37" class="slide flex-col justify-center items-center text-center">
+            <div class="max-w-3xl w-full p-8 card bg-white rounded-xl">
+                <h2 class="text-3xl font-bold text-indigo-700 mb-6">Quiz Question 4: Number Comparison</h2>
+                <p class="text-xl mb-4">Which of these two numbers is <strong>LARGER</strong>?</p>
+                <div class="font-mono text-xl font-bold mb-6 space-y-2">
+                    <p>X: <strong>3,456,789,123</strong></p>
+                    <p>Y: <strong>3,456,789,023</strong></p>
+                </div>
+                <div id="q4-options" class="text-left space-y-4">
+                    <div class="quiz-option p-4 border rounded-lg" data-answer="correct" onclick="checkAnswer(4, this)">A. Number X is larger.</div>
+                    <div class="quiz-option p-4 border rounded-lg" data-answer="wrong" onclick="checkAnswer(4, this)">B. Number Y is larger.</div>
+                    <div class="quiz-option p-4 border rounded-lg" data-answer="wrong" onclick="checkAnswer(4, this)">C. The numbers are equal.</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 38: Quiz Result/Score -->
+        <section id="slide-38" class="slide flex-col justify-center items-center text-center">
+            <div class="max-w-3xl w-full p-8 card bg-white rounded-xl">
+                <h2 class="text-4xl font-extrabold text-indigo-700 mb-6">Quiz Results</h2>
+                <div id="score-display" class="text-6xl font-extrabold text-green-600 mb-4">...</div>
+                <p class="text-2xl text-gray-700 mb-6">Your final score is <span id="final-score" class="text-indigo-600 font-bold">0 / 4</span>.</p>
+                <p id="feedback-message" class="text-xl text-gray-800"></p>
+                <p class="text-lg mt-8">Great job completing the quiz! Click 'Next' to view your final assignment.</p>
+            </div>
+        </section>
+        
+        <!-- Slide 39: Final Assignment -->
+        <section id="slide-39" class="slide flex-col justify-center items-center text-center">
+            <div class="max-w-3xl w-full p-8 card bg-white rounded-xl">
+                <h2 class="text-4xl font-extrabold text-indigo-700 mb-4">Final Assignment</h2>
+                <p class="text-xl text-gray-700 mb-6">As a continuation task, Arkan can try to write the number for:</p>
+                <div class="bg-yellow-100 p-6 rounded-lg text-2xl font-bold text-yellow-800 italic">
+                    'Eight hundred seventy-five trillion two hundred billion one million thirty'
+                </div>
+                <p class="text-lg text-gray-700 mt-6">Feel free to practice reading and writing big numbers again.</p>
+                <p class="text-2xl font-bold text-green-600 mt-4">Keep practicing, Arkan! You can do it!</p>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Navigation Bar -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-xl p-3 flex justify-center space-x-4 z-20">
+        <button id="prev-btn" onclick="changeSlide(-1)" disabled
+                class="btn-nav flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded-full font-semibold disabled:opacity-50 disabled:cursor-not-allowed">
+            <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+            Previous
+        </button>
+        <div id="slide-counter" class="text-lg font-bold text-indigo-600 self-center">1 / 39</div>
+        <button id="next-btn" onclick="changeSlide(1)"
+                class="btn-nav flex items-center px-4 py-2 bg-indigo-600 text-white rounded-full font-semibold hover:bg-indigo-700">
+            Next
+            <svg class="w-5 h-5 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+        </button>
+    </nav>
+
+<script>
+    let currentSlide = 1;
+    // The user requested 35 slides, but the quiz has 4 questions (slides 34-37) plus the intro (33) and score (38) and final assignment (39).
+    // Total slides = 39 to cover all content + quiz + score + final task.
+    // However, I will set totalSlides to 39 and state that the quiz is from 33-38 (6 slides). Let's stick to the content layout of 39 slides.
+    const totalSlides = 39; 
+    const quizStartSlide = 34; // Q1 starts here
+    const quizEndSlide = 37; // Q4 ends here
+    const scoreSlide = 38;
+    const answers = {}; // Store answers for scoring
+
+    document.addEventListener('DOMContentLoaded', () => {
+        showSlide(currentSlide);
+    });
+
+    /**
+     * Display the corresponding slide.
+     */
+    function showSlide(n) {
+        if (n < 1 || n > totalSlides) return;
+
+        // Hide all slides
+        document.querySelectorAll('.slide').forEach(slide => {
+            slide.classList.remove('active');
+        });
+
+        // Show the active slide
+        const activeSlide = document.getElementById(`slide-${n}`);
+        if (activeSlide) {
+            activeSlide.classList.add('active');
+            currentSlide = n;
+        }
+
+        // Update navigation and handle score display
+        updateNavigation();
+
+        if (n === scoreSlide) {
+            calculateScore();
+        }
+    }
+
+    /**
+     * Change slide when navigation buttons are clicked.
+     */
+    function changeSlide(step) {
+        showSlide(currentSlide + step);
+    }
+
+    /**
+     * Update navigation button status and slide counter.
+     */
+    function updateNavigation() {
+        document.getElementById('slide-counter').textContent = `${currentSlide} / ${totalSlides}`;
+        document.getElementById('slide-info').textContent = `Slide ${currentSlide} of ${totalSlides}`;
+
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+
+        prevBtn.disabled = currentSlide === 1;
+        nextBtn.disabled = currentSlide === totalSlides;
+
+        // Disable 'Next' on quiz slides until an answer is selected (Optional: I will allow skipping for simplicity)
+        // If the current slide is a quiz slide, the logic should be handled by checkAnswer().
+    }
+
+    /**
+     * Reveal the answer for the riddle on Slide 2.
+     */
+    function revealRiddleAnswer() {
+        // Answer: 8.300.050 (8 Million, 3 Hundred Thousand, 5 Ten, rest 0)
+        document.getElementById('riddle-answer').textContent = '8,300,050';
+    }
+
+    /**
+     * Handles the quiz answer selection.
+     */
+    function checkAnswer(questionNum, selectedOption) {
+        const parentId = `q${questionNum}-options`;
+        const options = document.getElementById(parentId).querySelectorAll('.quiz-option');
+        
+        // 1. Disable all options for this question
+        options.forEach(option => {
+            option.classList.add('disabled', 'pointer-events-none');
+        });
+
+        // 2. Determine correct answer
+        const isCorrect = selectedOption.getAttribute('data-answer') === 'correct';
+        
+        // 3. Apply styling
+        if (isCorrect) {
+            selectedOption.classList.add('correct-answer', 'border-green-500');
+        } else {
+            selectedOption.classList.add('wrong-answer', 'border-red-500');
+            // Highlight the correct answer
+            options.forEach(option => {
+                if (option.getAttribute('data-answer') === 'correct') {
+                    option.classList.add('correct-answer', 'border-green-500');
+                }
+            });
+        }
+
+        // 4. Record answer
+        answers[questionNum] = isCorrect;
+    }
+
+    /**
+     * Calculates and displays the final quiz score.
+     */
+    function calculateScore() {
+        let score = 0;
+        for (let i = 1; i <= 4; i++) {
+            if (answers[i] === true) {
+                score++;
+            }
+        }
+        
+        const totalQuestions = 4;
+        document.getElementById('final-score').textContent = `${score} / ${totalQuestions}`;
+        document.getElementById('score-display').textContent = `${score}/${totalQuestions}`;
+
+        let message = "";
+        let color = "";
+
+        if (score === totalQuestions) {
+            message = "Excellent job, Arkan! You are a master of giant numbers!";
+            color = "text-green-600";
+        } else if (score >= totalQuestions / 2) {
+            message = "Good effort! You understand the main concepts. Review the sections on place value and conversion.";
+            color = "text-yellow-600";
+        } else {
+            message = "Keep practicing! Review the three-digit grouping pattern for trillions, billions, and millions.";
+            color = "text-red-600";
+        }
+
+        document.getElementById('feedback-message').textContent = message;
+        document.getElementById('feedback-message').classList = ['text-xl', color];
+    }
+
+</script>
+
+</body>
+</html>
