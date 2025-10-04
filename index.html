@@ -1,217 +1,43 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Save My Links — Presentation Hub</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Materials Links</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-slate-50 text-slate-900 min-h-screen">
-  <div class="max-w-6xl mx-auto p-6">
-    <header class="flex items-center justify-between mb-6">
+<body class="bg-gradient-to-b from-blue-100 to-white min-h-screen flex items-center justify-center">
+  <div class="w-full max-w-md bg-white rounded-2xl shadow-lg p-6 text-center overflow-y-auto max-h-screen">
+    <div class="mb-6">
+      <img src="https://img.icons8.com/color/96/000000/link.png" alt="logo" class="mx-auto mb-4"/>
+      <h1 class="text-2xl font-bold text-blue-700">My Presentation Materials</h1>
+      <p class="text-gray-500">Save and access your math files easily</p>
+    </div>
+
+    <!-- Parent Category Example -->
+    <div class="space-y-6 text-left">
       <div>
-        <h1 class="text-2xl font-bold">Save My Links — Presentation Hub</h1>
-        <p class="text-sm text-slate-500">Quickly save, preview, and share your presentation HTML files (eg. math 5.1.html).</p>
-      </div>
-      <div class="text-right">
-        <button id="clearAll" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 text-sm">Clear all</button>
-      </div>
-    </header>
-
-    <section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-      <div class="col-span-1 md:col-span-2 bg-white p-4 rounded shadow-sm">
-        <form id="addForm" class="space-y-3">
-          <div class="flex gap-2">
-            <input id="titleInput" type="text" placeholder="Title (e.g. math 5.1)" class="flex-1 border rounded px-3 py-2" />
-            <input id="urlInput" type="url" placeholder="Or paste URL (https://...)" class="flex-2 border rounded px-3 py-2" />
-            <button type="submit" class="px-4 py-2 bg-sky-600 text-white rounded">Save</button>
-          </div>
-
-          <div class="flex items-center gap-3">
-            <label class="text-sm text-slate-600">Or upload local HTML file:</label>
-            <input id="fileInput" type="file" accept="text/html" class="block" />
-          </div>
-
-          <p class="text-xs text-slate-500">Files are stored in your browser (localStorage). Use "Export" to download backup.</p>
-        </form>
-
-        <div class="mt-4">
-          <input id="search" type="search" placeholder="Search titles or filenames" class="w-full border px-3 py-2 rounded" />
-        </div>
-
-        <div id="list" class="mt-4 space-y-3"></div>
-
-        <div class="mt-4 flex gap-2">
-          <button id="exportAll" class="px-4 py-2 bg-green-600 text-white rounded">Export JSON</button>
-          <button id="importBtn" class="px-4 py-2 bg-amber-500 text-white rounded">Import JSON</button>
-          <input id="importFile" type="file" accept="application/json" class="hidden" />
+        <h2 class="text-blue-700 font-semibold mb-2">Grade 5</h2>
+        <div class="space-y-3">
+          <a href="math5.1.html" class="block w-full py-3 px-4 rounded-lg bg-blue-600 text-white font-semibold shadow hover:bg-blue-700 transition">Math 5.1</a>
+          <a href="math5.2.html" class="block w-full py-3 px-4 rounded-lg border border-blue-600 text-blue-600 font-semibold hover:bg-blue-50 transition">Math 5.2</a>
+          <a href="math5.3.html" class="block w-full py-3 px-4 rounded-lg border border-blue-600 text-blue-600 font-semibold hover:bg-blue-50 transition">Math 5.3</a>
         </div>
       </div>
 
-      <aside class="bg-white p-4 rounded shadow-sm">
-        <h3 class="font-medium">Preview</h3>
-        <div class="mt-3 border rounded overflow-hidden h-[60vh]">
-          <iframe id="preview" srcdoc="" class="w-full h-full" sandbox="allow-scripts allow-same-origin"></iframe>
+      <div>
+        <h2 class="text-blue-700 font-semibold mb-2">Grade 6</h2>
+        <div class="space-y-3">
+          <a href="math6.1.html" class="block w-full py-3 px-4 rounded-lg bg-blue-600 text-white font-semibold shadow hover:bg-blue-700 transition">Math 6.1</a>
+          <a href="math6.2.html" class="block w-full py-3 px-4 rounded-lg border border-blue-600 text-blue-600 font-semibold hover:bg-blue-50 transition">Math 6.2</a>
+          <a href="math6.3.html" class="block w-full py-3 px-4 rounded-lg border border-blue-600 text-blue-600 font-semibold hover:bg-blue-50 transition">Math 6.3</a>
         </div>
-      </aside>
-    </section>
+      </div>
 
-    <footer class="text-xs text-slate-500">Made for quick lesson link management — drag, drop, copy link, preview. Local only.</footer>
+      <!-- Add more parent categories as needed -->
+    </div>
+
+    <p class="mt-6 text-gray-400 text-sm text-center">By Your Name</p>
   </div>
-
-<script>
-const STORAGE_KEY = 'save_my_links_v1';
-
-function uid() { return 'id-' + Math.random().toString(36).slice(2,10); }
-
-function loadItems(){
-  try{
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : [];
-  }catch(e){
-    console.error(e);
-    return [];
-  }
-}
-
-function saveItems(items){
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-}
-
-function renderList(filter=''){
-  const listEl = document.getElementById('list');
-  const items = loadItems().slice().reverse();
-  listEl.innerHTML = '';
-  const q = filter.trim().toLowerCase();
-  items.forEach(item=>{
-    if(q && !(item.title||'').toLowerCase().includes(q) && !(item.name||'').toLowerCase().includes(q)) return;
-    const card = document.createElement('div');
-    card.className = 'p-3 border rounded flex items-center justify-between gap-3';
-    card.innerHTML = `
-      <div class="flex-1 min-w-0">
-        <div class="font-medium truncate">${escapeHtml(item.title||item.name||'Untitled')}</div>
-        <div class="text-xs text-slate-500 truncate">${escapeHtml(item.name || item.url || '')}</div>
-        <div class="text-xs text-slate-400 mt-1">Saved: ${new Date(item.created).toLocaleString()}</div>
-      </div>
-      <div class="flex items-center gap-2">
-        <button class="btn-preview px-3 py-1 text-sm border rounded">Preview</button>
-        <button class="btn-copy px-3 py-1 text-sm border rounded">Copy link</button>
-        <button class="btn-download px-3 py-1 text-sm border rounded">Download</button>
-        <button class="btn-delete px-3 py-1 text-sm text-red-600">Del</button>
-      </div>
-    `;
-
-    // Events
-    card.querySelector('.btn-preview').addEventListener('click', ()=>{
-      const iframe = document.getElementById('preview');
-      if(item.dataURL){
-        iframe.srcdoc = item.dataURL.startsWith('<') ? item.dataURL : atob(item.dataURL.split(',')[1]);
-      }else if(item.url){
-        iframe.src = item.url;
-      }else{
-        iframe.srcdoc = '<p class="p-4">No preview available</p>';
-      }
-    });
-
-    card.querySelector('.btn-copy').addEventListener('click', async ()=>{
-      let link = item.url || (location.href.split('#')[0] + '#file=' + item.id);
-      try{ await navigator.clipboard.writeText(link); alert('Copied:\n'+link); }catch(e){ prompt('Copy this link', link); }
-    });
-
-    card.querySelector('.btn-download').addEventListener('click', ()=>{
-      if(item.dataURL){
-        const blob = dataURLToBlob(item.dataURL);
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = item.name || (item.title || 'presentation') + '.html';
-        document.body.appendChild(a); a.click(); a.remove();
-      }else if(item.url){
-        window.open(item.url, '_blank');
-      }
-    });
-
-    card.querySelector('.btn-delete').addEventListener('click', ()=>{
-      if(!confirm('Delete this item?')) return;
-      const all = loadItems().filter(x=>x.id !== item.id);
-      saveItems(all); renderList(document.getElementById('search').value);
-    });
-
-    listEl.appendChild(card);
-  });
-}
-
-function escapeHtml(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-
-function dataURLToBlob(dataurl) {
-  const arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1], bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
-  for (let i = 0; i < n; i++) u8arr[i] = bstr.charCodeAt(i);
-  return new Blob([u8arr], {type:mime});
-}
-
-// handle adding by URL or title
-document.getElementById('addForm').addEventListener('submit', async (e)=>{
-  e.preventDefault();
-  const title = document.getElementById('titleInput').value.trim();
-  const url = document.getElementById('urlInput').value.trim();
-  if(!title && !url){ alert('Enter title or URL or upload a file.'); return; }
-  const items = loadItems();
-  const item = { id: uid(), title: title || '', url: url || '', name: url? (new URL(url)).pathname.split('/').pop() : '', created: Date.now() };
-  items.push(item); saveItems(items); renderList(document.getElementById('search').value);
-  document.getElementById('titleInput').value = ''; document.getElementById('urlInput').value='';
-});
-
-// handle local file upload
-document.getElementById('fileInput').addEventListener('change', async (e)=>{
-  const f = e.target.files[0]; if(!f) return;
-  if(!f.name.endsWith('.html') && !f.type.includes('html')){
-    if(!confirm('File does not look like HTML. Continue?')) return;
-  }
-  const text = await f.text();
-  const items = loadItems();
-  items.push({ id: uid(), title: f.name.replace(/\.html?$/i,''), name: f.name, dataURL: text.startsWith('<') ? text : text, created: Date.now() });
-  saveItems(items); renderList(document.getElementById('search').value);
-  e.target.value = null;
-});
-
-// search
-document.getElementById('search').addEventListener('input', (e)=> renderList(e.target.value));
-
-// clear
-document.getElementById('clearAll').addEventListener('click', ()=>{
-  if(confirm('Clear all saved links?')){ localStorage.removeItem(STORAGE_KEY); renderList(''); document.getElementById('preview').srcdoc = ''; }
-});
-
-// export
-document.getElementById('exportAll').addEventListener('click', ()=>{
-  const items = loadItems();
-  const blob = new Blob([JSON.stringify(items, null, 2)], {type:'application/json'});
-  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'save-my-links.json'; document.body.appendChild(a); a.click(); a.remove();
-});
-
-// import
-document.getElementById('importBtn').addEventListener('click', ()=> document.getElementById('importFile').click());
-document.getElementById('importFile').addEventListener('change', async (e)=>{
-  const f = e.target.files[0]; if(!f) return;
-  try{
-    const txt = await f.text(); const arr = JSON.parse(txt);
-    const items = loadItems().concat(Array.isArray(arr)?arr:[]);
-    saveItems(items); renderList('');
-  }catch(err){ alert('Import failed: '+err.message); }
-  e.target.value = null;
-});
-
-// load list initially
-renderList('');
-
-// support deep link preview: #file=<id>
-window.addEventListener('load', ()=>{
-  const h = location.hash.replace('#','');
-  if(h.startsWith('file=')){
-    const id = h.split('=')[1];
-    const item = loadItems().find(x=>x.id===id);
-    if(item){ const iframe = document.getElementById('preview'); if(item.dataURL) iframe.srcdoc = item.dataURL; else if(item.url) iframe.src = item.url; }
-  }
-});
-</script>
 </body>
 </html>
