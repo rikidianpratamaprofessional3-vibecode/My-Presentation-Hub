@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Petualangan Detektif Bentuk</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Patrick+Hand&family=Russo+One&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Patrick Hand', cursive;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+        
+        .presentation {
+            width: 100vw;
+            min-height: 100vh;
+            position: relative;
+        }
+        
+        .slide {
+            width: 100%;
+            min-height: 100vh;
+            display: none;
+            position: relative;
+            padding: 40px;
+            background-size: cover;
+            background-position: center;
+            animation: slideIn 0.6s ease-out;
+            overflow-y: auto;
+        }
+        
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        /* Slide Backgrounds */
+        .slide-1 { background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800"><rect fill="%23d4a574" width="1200" height="800"/><path fill="%23a67c52" d="M0 400 Q 300 350, 600 400 T 1200 400 L 1200 800 L 0 800 Z"/></svg>'); }
+        .slide-2, .slide-3, .slide-4, .slide-5, .slide-6, .slide-7, .slide-8, .slide-9, .slide-10, .slide-11, .slide-12, .slide-13, .slide-14, .slide-15, .slide-16, .slide-17, .slide-18, .slide-19, .slide-20, .slide-21, .slide-22, .slide-23, .slide-24, .slide-25, .slide-26, .slide-27 {
+            background: linear-gradient(135deg, #f5deb3 0%, #d2b48c 100%);
+        }
+        
+        .file-cover {
+            background: #8b7355;
+            border: 8px solid #654321;
+            border-radius: 20px;
+            padding: 60px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            position: relative;
+            max-width: 800px;
+        }
+        
+        .stamp {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 150px;
+            height: 150px;
+            border: 5px solid #c41e3a;
+            border-radius: 10px;
+            transform: rotate(-15deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Russo One', sans-serif;
+            color: #c41e3a;
+            font-size: 24px;
+            font-weight: bold;
+            opacity: 0.8;
+        }
+        
+        .magnifier {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            width: 100px;
+            height: 100px;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        h1 {
+            font-family: 'Russo One', sans-serif;
+            color: #ffd700;
+            font-size: 64px;
+            text-shadow: 4px 4px 8px rgba(0,0,0,0.8);
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+        }
+        
+        h2 {
+            font-family: 'Russo One', sans-serif;
+            color: #1a3a52;
+            font-size: 42px;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-family: 'Permanent Marker', cursive;
+            color: #fff;
+            font-size: 32px;
+            font-style: italic;
+        }
+        
+        .content-box {
+            background: rgba(255, 255, 255, 0.95);
+            border: 4px solid #654321;
+            border-radius: 15px;
+            padding: 40px;
+            max-width: 900px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            margin: 20px;
+        }
+        
+        .content-text {
+            font-size: 26px;
+            line-height: 1.8;
+            color: #333;
+            text-align: center;
+        }
+        
+        .equipment-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin-top: 20px;
+        }
+        
+        .equipment-item {
+            background: #fff;
+            border: 3px solid #b8860b;
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        
+        .equipment-item:hover {
+            transform: scale(1.05);
+        }
+        
+        .equipment-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        
+        .equipment-name {
+            font-size: 22px;
+            font-weight: bold;
+            color: #1a3a52;
+            margin-bottom: 8px;
+        }
+        
+        .equipment-desc {
+            font-size: 18px;
+            color: #666;
+        }
+        
+        .shape-card {
+            background: #fff;
+            border: 4px solid #4a7c59;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 15px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            text-align: center;
+            min-width: 200px;
+        }
+        
+        .shape-title {
+            font-family: 'Russo One', sans-serif;
+            font-size: 28px;
+            color: #c41e3a;
+            margin-bottom: 15px;
+        }
+        
+        .shape-visual {
+            font-size: 80px;
+            margin: 20px 0;
+        }
+        
+        .shape-property {
+            font-size: 20px;
+            color: #333;
+            margin: 10px 0;
+        }
+        
+        .navigation {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            z-index: 1000;
+        }
+        
+        .nav-btn {
+            background: #b8860b;
+            color: #fff;
+            border: none;
+            padding: 15px 30px;
+            font-size: 20px;
+            font-family: 'Russo One', sans-serif;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s;
+        }
+        
+        .nav-btn:hover {
+            background: #daa520;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+        }
+        
+        .slide-counter {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            background: rgba(0,0,0,0.7);
+            color: #ffd700;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 20px;
+            font-family: 'Russo One', sans-serif;
+            z-index: 1000;
+        }
+        
+        .badge {
+            display: inline-block;
+            background: #c41e3a;
+            color: #fff;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 20px;
+            font-weight: bold;
+            margin: 10px;
+        }
+        
+        .mission-box {
+            background: linear-gradient(135deg, #ffe5b4 0%, #ffd700 100%);
+            border: 5px dashed #b8860b;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+            font-size: 24px;
+            color: #333;
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        .shapes-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .certificate {
+            background: #fff;
+            border: 15px double #b8860b;
+            border-radius: 20px;
+            padding: 50px;
+            max-width: 700px;
+            text-align: center;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+        }
+        
+        .cert-title {
+            font-family: 'Russo One', sans-serif;
+            font-size: 36px;
+            color: #1a3a52;
+            margin-bottom: 20px;
+        }
+        
+        .cert-text {
+            font-size: 20px;
+            line-height: 1.8;
+            color: #333;
+            margin: 15px 0;
+        }
+        
+        .signature-line {
+            border-top: 2px solid #333;
+            width: 300px;
+            margin: 30px auto 10px;
+        }
+        
+        .keyword-circle {
+            display: inline-block;
+            width: 180px;
+            height: 180px;
+            border: 5px solid #c41e3a;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: bold;
+            color: #1a3a52;
+            margin: 20px;
+            background: rgba(255,255,255,0.9);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        .detective-character {
+            font-size: 120px;
+            animation: bounce 2s ease-in-out infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-30px); }
+        }
+        
+        .evidence-tag {
+            background: #ffd700;
+            border: 3px solid #b8860b;
+            border-radius: 10px;
+            padding: 15px 25px;
+            display: inline-block;
+            margin: 10px;
+            font-size: 22px;
+            font-weight: bold;
+            color: #333;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        
+        .plot-twist {
+            background: linear-gradient(45deg, #c41e3a, #e63946);
+            color: #fff;
+            padding: 40px;
+            border-radius: 20px;
+            font-size: 28px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .fax-machine {
+            font-size: 100px;
+            animation: shake 0.5s ease-in-out infinite;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-5deg); }
+            75% { transform: rotate(5deg); }
+        }
+        
+        .dimension-label {
+            display: inline-block;
+            background: #4a7c59;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 20px;
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation">
+        <div class="slide-counter">Slide <span id="current-slide">1</span> / 27</div>
+        
+        <!-- SLIDE 1: Sampul File Rahasia -->
+        <div class="slide slide-1 active">
+            <div class="file-cover">
+                <div class="stamp">TOP SECRET</div>
+                <h1>PETUALANGAN<br>DETEKTIF BENTUK</h1>
+                <p class="subtitle">Membongkar Rahasia Geometri di Sekitar Kita</p>
+                <div class="magnifier">🔍</div>
+            </div>
+        </div>
+        
+        <!-- SLIDE 2: Panggilan Misi -->
+        <div class="slide slide-2">
+            <h2>🕵️ SELAMAT DATANG, AGEN GEOMETRI MUDA! 🕵️</h2>
+            <div class="content-box">
+                <div class="detective-character">🕵️‍♂️</div>
+                <p class="content-text">
+                    Kami membutuhkan bantuanmu. Ada <strong>'Kasus Besar'</strong> yang harus dipecahkan: 
+                    Rahasia bentuk-bentuk misterius yang ada di sekeliling kita.
+                </p>
+                <div class="mission-box">
+                    ⚡ APAKAH KALIAN SIAP MENERIMA MISI? ⚡
+                </div>
+                <p class="content-text" style="margin-top: 20px; font-size: 22px;">
+                    <strong>Kepala Detektif</strong> akan membimbing kalian dalam petualangan ini!
+                </p>
+            </div>
+        </div>
+        
+        <!-- SLIDE 3: Peralatan Detektif -->
+        <div class="slide slide-3">
+            <h2>🎒 PERALATAN DETEKTIFMU 🎒</h2>
+            <div class="content-box">
+                <div class="equipment-grid">
+                    <div class="equipment-item">
+                        <div class="equipment-icon">👁️</div>
+                        <div class="equipment-name">Mata-mata Tajam</div>
+                        <div class="equipment-desc">Untuk mengamati detail</div>
+                    </div>
+                    <div class="equipment-item">
+                        <div class="equipment-icon">🧠</div>
+                        <div class="equipment-name">Pikiran Analitis</div>
+                        <div class="equipment-desc">Untuk memecahkan kode</div>
+                    </div>
+                    <div class="equipment-item">
+                        <div class="equipment-icon">📐</div>
+                        <div class="equipment-name">Penggaris & Jangka</div>
+                        <div class="equipment-desc">Untuk mengukur bukti</div>
+                    </div>
+                    <div class="equipment-item">
+                        <div class="equipment-icon">📔</div>
+                        <div class="equipment-name">Buku Catatan Lapangan</div>
+                        <div class="equipment-desc">Untuk mencatat temuan</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- SLIDE 4: Apa Itu Geometri -->
+        <div class="slide slide-4">
+            <h2>🔐 MEMECAHKAN KODE PERTAMA: GEOMETRI 🔐</h2>
+            <div class="content-box">
+                <p class="content-text" style="margin-bottom: 40px;">
+                    Geometri adalah ilmu rahasia tentang:
+                </p>
+                <div style="display: flex; justify-content: center; flex-wrap: wrap;">
+                    <div class="keyword-circle">BENTUK</div>
+                    <div class="keyword-circle">UKURAN</div>
+                    <div class="keyword-circle">RUANG</div>
+                </div>
+                <p class="content-text" style="margin-top: 40px; font-size: 28px; font-weight: bold; color: #c41e3a;">
+                    Mari kita bongkar satu per satu! 🔍
+                </p>
+            </div>
+        </div>
+        
+        <!-- SLIDE 5: Kasus #1 - Segitiga Pengintai -->
+        <div class="slide slide-5">
+            <h2>📁 PETUNJUK #1: SI SEGITIGA PENGINTAI 📁</h2>
+            <div class="content-box">
+                <div class="shape-visual">▲</div>
+                <div class="badge">KASUS #1</div>
+                <p class="content-text">
+                    <strong>Agen, temukan bentuk dengan 3 sisi tajam dan 3 sudut!</strong>
+                </p>
+                <p class="content-text" style="margin-top: 20px;">
+                    Ia sering bersembunyi di:
+                </p>
+                <div class="evidence-tag">🏠 Atap Rumah</div>
+                <div class="evidence-tag">🎉 Topi Ulang Tahun</div>
+                <div class="evidence-tag">⚠️ Tanda Lalu Lintas</div>
+            </div>
+        </div>
+        
+        <!-- SLIDE 6: Autopsi Segitiga -->
+        <div class="slide slide-6">
+            <h2>🔬 BUKTI FORENSIK: SEGITIGA 🔬</h2>
+            <div class="content-box">
+                <div class="shape-visual">△</div>
+                <div class="shape-property">✅ Memiliki <strong>3 SISI</strong></div>
+                <div class="shape-property">✅ Memiliki <strong>3 SUDUT</strong></div>
+                <div style="margin-top: 30px; padding: 20px; background: #f0f0f0; border-radius: 10px;">
+                    <p style="font-size: 24px; font-weight: bold; margin-bottom: 15px;">JENIS-JENIS:</p>
+                    <div class="evidence-tag">▲ Sama Sisi</div>
+                    <div class="evidence-tag">▲ Sama Kaki</div>
+                    <div class="evidence-tag">▲ Sembarang</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- SLIDE 7: Misi Cepat - Segitiga -->
+        <div class="slide slide-7">
+            <h2>⚡ MISI CEPAT: TEMUKAN SEGITIGA! ⚡</h2>
+            <div class="content-box">
+                <div class="mission-box" style="font-size: 28px;">
+                    🔍 Berapa banyak segitiga yang kalian temukan<br>di gambar markas rahasia ini? 🔍
+                </div>
+                <div style="margin-top: 30px; font-size: 100px; line-height: 1.2;">
+                    🏠🎪🗼<br>
+                    ⛺🎨📐
+                </div>
+                <p class="content-text" style="margin-top: 20px; color: #c41e3a;">
+                    Catat temuanmu di buku catatan lapangan!
+                </p>
+            </div>
+        </div>
+        
+        <!-- SLIDE 8: Kasus #2 - Persegi Penjaga -->
+        <div class="slide slide-8">
+            <h2>📁 PETUNJUK #2: SANG PERSEGI PENJAGA 📁</h2>
+            <div class="content-box">
+                <div class="shape-visual">⬛</div>
+                <div class="badge">KASUS #2</div>
+                <p class="content-text">
+                    <strong>Bentuk ini sangat adil.</strong><br>
+                    Keempat sisinya sama panjang, dan keempat sudutnya siku-siku.
+                </p>
+                <p class="content-text" style="margin-top: 20px;">
+                    Ia menjaga:
+                </p>
+                <div class="evidence-tag">🎲 Dadu</div>
+                <div class="evidence-tag">📦 Kotak Tisu</div>
+                <div class="evidence-tag">🪟 Jendela</div>
+            </div>
+        </div>
+        
+        <!-- SLIDE 9: Autopsi Persegi -->
+        <div class="slide slide-9">
+            <h2>🔬 BUKTI FORENSIK: PERSEGI 🔬</h2>
+            <div class="content-box">
+                <div class="shape-visual">▢</div>
+                <div class="shape-property">✅ <strong>4 SISI</strong> sama panjang</div>
+                <div class="shape-property">✅ <strong>4 SUDUT</strong> siku-siku (90°)</div>
+                <div style="margin-top: 30px; padding: 25px; background: #fff3cd; border: 3px solid #ffc107; border-radius: 10px;">
+                    <p style="font-size: 24px; font-weight: bold; color: #333;">
+                        📏 Semua sisinya PANJANG YANG SAMA!
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- SLIDE 10: Kasus #3 - Persegi Panjang Elusif -->
+        <div class="slide slide-10">
+            <h2>📁 PETUNJUK #3: PERSEGI PANJANG ELUSIF 📁</h2>
+            <div class="content-box">
+                <div class="shape-visual">▬</div>
+                <div class="badge">KASUS #3</div>
+                <p class="content-text">
+                    <strong>Mirip Persegi, tapi dua sisinya lebih panjang.</strong><br>
+                    Sangat ahli dalam menyamar!
+                </p>
+                <p class="content-text" style="margin-top: 20px;">
+                    Menyamar menjadi:
+                </p>
+                <div class="evidence-tag">🚪 Pintu</div>
+                <div class="evidence-tag">📋 Papan Tulis</div>
+                <div class="evidence-tag">📱 Layar HP</div>
+            </div>
+        </div>
+        
+        <!-- SLIDE 11: Autopsi Persegi Panjang -->
+        <div class="slide slide-11">
+            <h2>🔬 BUKTI FORENSIK: PERSEGI PANJANG 🔬</h2>
+            <div class="content-box">
+                <div class="shape-visual">▭</div>
+                <div class="shape-property">✅ Sisi di hadapan <strong>SAMA PANJANG</strong></div>
+                <div class="shape-property">✅ <strong>4 SUDUT</strong> siku-siku (90°)</div>
+                <div style="margin-top: 30px; padding: 25px; background: #d1ecf1; border: 3px solid #0c5460; border-radius: 10px;">
+                    <p style="font-size: 24px; font-weight: bold; color: #0c5460;">
+                        📏 Panjang ≠ Lebar (Berbeda!)
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- SLIDE 12: Kasus #4 - Lingkaran Mata-mata -->
+        <div class="slide slide-12">
+            <h2>📁 PETUNJUK #4: LINGKARAN MATA-MATA 📁</h2>
+            <div class="content-box">
+                <div class="shape-visual">⭕</div>
+                <div class="badge">KASUS #4</div>
+                <p class="content-text">
+                    <strong>Spionase tanpa batas!</strong><br>
+                    Tidak memiliki sudut atau sisi.
+                </p>
+                <p class="content-text" style="margin-top: 20px;">
+                    Selalu mengintai dari:
+                </p>
+                <div class="evidence-tag">🕐 Jam Dinding</div>
+                <div class="evidence-tag">🎡 Roda</div>
+                <div class="evidence-tag">🍽️ Piring</div>
+            </div>
+        </div>
+        
+        <!-- SLIDE 13: Autopsi Lingkaran -->
+        <div class="slide slide-13">
+            <h2>🔬 BUKTI FORENSIK: LINGKARAN 🔬</h2>
+            <div class="content-box">
+                <div class="shape-visual">◯</div>
+                <div class="shape-property">✅ <strong>TIDAK ADA SISI</strong> atau sudut</div>
+                <div class="shape-property">✅ Berbentuk <strong>BULAT SEMPURNA</strong></div>
+                <div style="margin-top: 30px; padding: 20px; background: #f0f0f0; border-radius: 10px;">
+                    <p style="font-size: 22px; font-weight: bold; margin-bottom: 15px;">BAGIAN-BAGIAN:</p>
+                    <div class="evidence-tag">⊙ Pusat Lingkaran</div>
+                    <div class="evidence-tag">📏 Jari-jari</div>
+                    <div class="evidence-tag">↔️ Diameter</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- SLIDE 14: Laporan Sementara Bangun Datar -->
+        <div class="slide slide-14">
+            <h2>📊 LAPORAN PROVISIONAL: BANGUN DATAR 📊</h2>
+            <div class="content-box">
+                <p style="font-size: 24px; text-align: center; margin-bottom: 30px; font-weight: bold;">
+                    KARTU IDENTITAS TERSANGKA BANGUN DATAR:
+                </p>
+                <div class="shapes-grid">
+                    <div class="shape-card">
+                        <div style="font-size: 60px;">▲</div>
+                        <div class="shape-title">SEGITIGA</div>
+                        <p style="font-size: 16px;">3 Sisi, 3 Sudut</p>
+                    </div>
+                    <div class="shape-card">
+                        <div style="font-size: 60px;">⬛</div>
+                        <div class="shape-title">PERSEGI</div>
+                        <p style="font-size: 16px;">4 Sisi Sama</p>
+                    </div>
+                    <div class="shape-card">
+                        <div style="font-size: 60px;">▬</div>
+                        <div class="shape-title">PERSEGI PANJANG</div>
+                        <p style="font-size: 16px;">2 Pasang Sisi</p>
+                    </div>
+                    <div class="shape-card">
+                        <div style="font-size: 60px;">⭕</div>
+                        <div class="shape-title">LINGKARAN</div>
+                        <p style="font-size: 16px;">Bulat Sempurna</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- SLIDE 15: Petunjuk Baru! -->
+        <div class="slide slide-15">
+            <h2>🚨 PLOT TWIST: BENTUK YANG MEMILIKI RUANG! 🚨</h2>
+            <div class="content-box">
+                <div class="fax-machine">📠</div>
+                <div class="plot-twist">
+                    <p style="font-size: 32px; font-weight: bold; margin-bottom: 20px;">
+                        ⚠️ PETUNJUK BARU DARI MARKAS! ⚠️
+                    </p>
+                    <p style="font-size: 24px;">
+                        Agen, kita mendapat fax dari markas!<br>
+                        Ternyata ada 'tersangka' lain yang tidak datar.<br>
+                        Mereka memiliki <strong>VOLUME</strong> dan bisa menempati <strong>RUANG</strong>.
+                    </p>
+                    <p style="font-size: 28px; margin-top: 20px; font-weight: bold;">
+                        Ini adalah Bangun RUANG! 📦
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- SLIDE 16: Memasuki Zona 3D -->
+        <div class="slide slide-16">
+            <h2>🌐 MEMASUKI ZONA DIMENSI BARU 🌐</h2>
+            <div class="content-box">
+                <p class="content-text" style="margin-bottom: 30px;">
+                    <strong>Untuk menyelidiki bangun ruang, kita perlu tahu istilah baru:</strong>
+                </p>
+                <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
+                    <div class="dimension-label">
+                        📐 SISI<br><small>(Permukaannya)</small>
+                    </div>
+                    <div class="dimension-label">
+                        📏 RUSUK<br><small>(Garis Pertemuannya)</small>
+                    </div>
+                    <div class="dimension-label">
+                        📍 TITIK SUDUT<br><small>(Ujung Pertemuannya)</small>
+                    </div>
+                </div>
+                <div style="margin-top: 40px; font-size: 80px;">
+                    📦 ➜ 🔍
+                </div>
+                <p class="content-text" style="margin-top: 20px; color: #c41e3a; font-weight: bold;">
+                    Bersiaplah memasuki dimensi 3D!
+                </p>
+            </div>
+        </div>
+        
+        <!-- SLIDE 17: Kasus #5 - Kubus Ajaib -->
+        <div class="slide slide-17">
+            <h2>📁 KASUS #5: KUBUS AJAIB 📁</h2>
+            <div class="content-box">
+                <div class="shape-visual">◼️</div>
+                <div class="badge">KASUS #5 - BANGUN RUANG</div>
+                <p class="content-text">
+                    <strong>Persegi yang tumbuh menjadi 3D!</strong><br>
+                    Semua sisinya adalah persegi.
+                </p>
+                <p class="content-text" style="margin-top: 20px;">
+                    Sering ditemukan di:
+                </p>
+                <div class="evidence-tag">🧊 Kubus Rubik</div>
+                <div class="evidence-tag">🧊 Es Batu</div>
+                <div class="evidence-tag">🎲 Dadu</div>
+            </div>
+        </div>
+        
+        <!-- SLIDE 18: Autopsi Kubus -->
+        <div class="slide slide-18">
+            <h2>🔬 BUKTI FORENSIK: KUBUS 🔬</h2>
+            <div class="content-box">
+                <div class="shape-visual">⬜</div>
+                <div style="background: #e8f5e9; padding: 30px; border-radius: 15px; border: 3px solid #4caf50;">
+                    <div class="shape-property" style="font-size: 28px; color: #2e7d32;">
+                        ✅ <strong>6 SISI</strong> (Semua Persegi)
+                    </div>
+                    <div class="shape-property" style="font-size: 28px; color: #2e7d32;">
+                        ✅ <strong>12 RUSUK</strong> (Sama Panjang)
+                    </div>
+                    <div class="shape-property" style="font-size: 28px; color: #2e7d32;">
+                        ✅ <strong>8 TITIK SUDUT</strong>
+                    </div>
+                </div>
+                <p style="margin-top: 25px; font-size: 22px; text-align: center; color: #666;">
+                    Bayangkan 6 persegi yang disatukan menjadi kotak!
+                </p>
+            </div>
+        </div>
+        
+        <!-- SLIDE 19: Kasus #6 - Balok Penyimpan -->
+        <div class="slide slide-19">
+            <h2>📁 KASUS #6: BALOK PENYIMPAN 📁</h2>
+            <div class="content-box">
+                <div class="shape-visual">📦</div>
+                <div class="badge">KASUS #6 - BANGUN RUANG</div>
+                <p class="content-text">
+                    <strong>Sepupu kubus.</strong><br>
+                    Wajahnya persegi panjang.<br>
+                    Ahli dalam menyimpan barang!
+                </p>
+                <p class="content-text" style="margin-top: 20px;">
+                    Menyimpan di:
+                </p>
+                <div class="evidence-tag">👟 Kotak Sepatu</div>
+                <div class="evidence-tag">🗄️ Lemari</div>
+                <div class="evidence-tag">📚 Buku</div>
+            </div>
+        </div>
+        
+        <!-- SLIDE 20: Kasus #7 - Tabung Peluncur -->
+        <div class="slide slide-20">
+            <h2>📁 KASUS #7: TABUNG PELUNCUR 📁</h2>
+            <div class="content-box">
+                <div class="shape-visual">🥫</div>
+                <div class="badge">KASUS #7 - BANGUN RUANG</div>
+                <p class="content-text">
+                    <strong>Lingkaran yang punya tubuh!</strong><br>
+                    Dua sisi lingkaran dan satu sisi lengkung.
+                </p>
+                <p class="content-text" style="margin-top: 20px;">
+                    Sering jadi:
+                </p>
+                <div class="evidence-tag">🥫 Kaleng</div>
+                <div class="evidence-tag">💧 Galon Air</div>
+                <div class="evidence-tag">🔍 Lensa Mata</div>
+            </div>
+        </div>
+        
+        <!-- SLIDE 21: Kasus #8 - Bola Siluman -->
+        <div class="slide slide-21">
+            <h2>📁 KASUS #8: BOLA SILUMAN 📁</h2>
+            <div class="content-box">
+                <div class="shape-visual">⚽</div>
+                <div class="badge">KASUS #8 - BANGUN RUANG</div>
+                <p class="content-text">
+                    <strong>Paling licin!</strong><br>
+                    Hanya memiliki 1 sisi melengkung.<br>
+                    Tidak ada rusuk atau titik sudut.
+                </p>
+                <p class="content-text" style="margin-top: 20px;">
+                    Sembunyi di:
+                </p>
+                <div class="evidence-tag">⚽ Bola</div>
+                <div class="evidence-tag">🌍 Globe</div>
+                <div class="evidence-tag">🪐 Planet</div>
+            </div>
+        </div>
+        
+        <!-- SLIDE 22: Kasus #9 - Kerucut Penunjuk Jalan -->
+        <div class="slide slide-22">
+            <h2>📁 KASUS #9: KERUCUT PENUNJUK JALAN 📁</h2>
+            <div class="content-box">
+                <div class="shape-visual">🚦</div>
+                <div class="badge">KASUS #9 - BANGUN RUANG</div>
+                <p class="content-text">
+                    <strong>Segitiga yang berputar dan ditutup lingkaran.</strong><br>
+                    Ahli dalam menunjukkan arah!
+                </p>
+                <p class="content-text" style="margin-top: 20px;">
+                    Cari di:
+                </p>
+                <div class="evidence-tag">🎂 Topi Ulang Tahun</div>
+                <div class="evidence-tag">🍦 Es Krim</div>
+                <div class="evidence-tag">🚧 Rambu Lalu Lintas</div>
+            </div>
+        </div>
+        
+        <!-- SLIDE 23: Misi Lapangan - Bangun Ruang -->
+        <div class="slide slide-23">
+            <h2>🎯 MISI BERSAMA: SKETSA RUANGAN KELAS! 🎯</h2>
+            <div class="content-box">
+                <div style="font-size: 100px; margin: 20px 0;">📓✏️</div>
+                <div class="mission-box" style="font-size: 26px;">
+                    📝 Ambil buku catatanmu!<br><br>
+                    Sketsalah minimal <strong>3 BENDA</strong> di ruangan ini<br>
+                    yang merupakan bangun ruang.<br><br>
+                    Tulis nama dan jenisnya!
+                </div>
+                <p class="content-text" style="margin-top: 30px; font-size: 22px;">
+                    <strong>Contoh:</strong><br>
+                    🪑 Kursi = Balok<br>
+                    🗑️ Tempat Sampah = Tabung<br>
+                    🌐 Globe = Bola
+                </p>
+            </div>
+        </div>
+        
+        <!-- SLIDE 24: Laporan Akhir Bangun Ruang -->
+        <div class="slide slide-24">
+            <h2>🗂️ DATABASE BENTUK LENGKAP 🗂️</h2>
+            <div class="content-box" style="max-width: 1100px;">
+                <p style="font-size: 26px; text-align: center; margin-bottom: 30px; font-weight: bold; color: #c41e3a;">
+                    SEMUA TERSANGKA TERIDENTIFIKASI!
+                </p>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+                    <div class="shape-card">
+                        <div style="font-size: 50px;">▲</div>
+                        <div class="shape-title" style="font-size: 20px;">SEGITIGA</div>
+                        <p style="font-size: 14px;">Bangun Datar</p>
+                    </div>
+                    <div class="shape-card">
+                        <div style="font-size: 50px;">⬛</div>
+                        <div class="shape-title" style="font-size: 20px;">PERSEGI</div>
+                        <p style="font-size: 14px;">Bangun Datar</p>
+                    </div>
+                    <div class="shape-card">
+                        <div style="font-size: 50px;">▬</div>
+                        <div class="shape-title" style="font-size: 20px;">PERSEGI PANJANG</div>
+                        <p style="font-size: 14px;">Bangun Datar</p>
+                    </div>
+                    <div class="shape-card">
+                        <div style="font-size: 50px;">⭕</div>
+                        <div class="shape-title" style="font-size: 20px;">LINGKARAN</div>
+                        <p style="font-size: 14px;">Bangun Datar</p>
+                    </div>
+                    <div class="shape-card">
+                        <div style="font-size: 50px;">◼️</div>
+                        <div class="shape-title" style="font-size: 20px;">KUBUS</div>
+                        <p style="font-size: 14px;">Bangun Ruang</p>
+                    </div>
+                    <div class="shape-card">
+                        <div style="font-size: 50px;">📦</div>
+                        <div class="shape-title" style="font-size: 20px;">BALOK</div>
+                        <p style="font-size: 14px;">Bangun Ruang</p>
+                    </div>
+                    <div class="shape-card">
+                        <div style="font-size: 50px;">🥫</div>
+                        <div class="shape-title" style="font-size: 20px;">TABUNG</div>
+                        <p style="font-size: 14px;">Bangun Ruang</p>
+                    </div>
+                    <div class="shape-card">
+                        <div style="font-size: 50px;">⚽</div>
+                        <div class="shape-title" style="font-size: 20px;">BOLA</div>
+                        <p style="font-size: 14px;">Bangun Ruang</p>
+                    </div>
+                    <div class="shape-card">
+                        <div style="font-size: 50px;">🚦</div>
+                        <div class="shape-title" style="font-size: 20px;">KERUCUT</div>
+                        <p style="font-size: 14px;">Bangun Ruang</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- SLIDE 25: Kasus Terpecahkan! -->
+        <div class="slide slide-25">
+            <h2>🎉 KASUS BESAR TERPECAHKAN! 🎉</h2>
+            <div class="content-box">
+                <div style="font-size: 100px; margin: 20px 0;">
+                    🕵️‍♂️🕵️‍♀️🎊🎉
+                </div>
+                <p class="content-text" style="font-size: 30px; color: #c41e3a; font-weight: bold;">
+                    LUAR BIASA, AGEN!
+                </p>
+                <p class="content-text" style="margin-top: 20px; font-size: 26px;">
+                    Kalian telah berhasil membongkar rahasia geometri di sekitar kita.<br>
+                    Kalian adalah <strong>DETEKTIF BENTUK</strong> yang andal!
+                </p>
+                <div style="margin-top: 40px; padding: 30px; background: linear-gradient(135deg, #ffd700, #ffed4e); border-radius: 15px; border: 5px solid #b8860b;">
+                    <p style="font-size: 28px; font-weight: bold; color: #333;">
+                        ⭐ MISI SELESAI DENGAN SEMPURNA! ⭐
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- SLIDE 26: Penghargaan dari Markas -->
+        <div class="slide slide-26">
+            <h2>🏆 PENGHARGAAN DARI MARKAS BESAR 🏆</h2>
+            <div class="certificate">
+                <div style="font-size: 60px; margin-bottom: 20px;">🎖️</div>
+                <div class="cert-title">SERTIFIKAT PENGHARGAAN</div>
+                <div style="border: 3px solid #b8860b; padding: 30px; margin: 20px 0; border-radius: 10px; background: #fffacd;">
+                    <p class="cert-text" style="font-size: 22px;">
+                        <strong>Diberikan Kepada:</strong>
+                    </p>
+                    <p class="cert-text" style="font-size: 28px; color: #c41e3a; font-weight: bold;">
+                        Agen-Agen Geometri Muda<br>
+                        [Nama Kelas]
+                    </p>
+                    <p class="cert-text" style="font-size: 20px; margin-top: 20px;">
+                        <strong>Atas:</strong><br>
+                        Keberhasilan Memecahkan Kasus<br>
+                        <em>"Rahasia Geometri di Sekitar Kita"</em>
+                    </p>
+                </div>
+                <div class="signature-line"></div>
+                <p class="cert-text" style="font-size: 18px;">
+                    <strong>Kepala Detektif</strong><br>
+                    [Nama Guru]
+                </p>
+                <div style="margin-top: 20px; font-size: 40px;">
+                    🔍 ⚡ 📐
+                </div>
+            </div>
+        </div>
+        
+        <!-- SLIDE 27: Misi Lanjutan (PR) -->
+        <div class="slide slide-27">
+            <h2>🏠 MISI LANJUTAN: OPERASI RUMAH 🏠</h2>
+            <div class="content-box">
+                <div style="font-size: 100px; margin: 20px 0;">🏠📸</div>
+                <p class="content-text" style="font-size: 28px; font-weight: bold; color: #c41e3a; margin-bottom: 30px;">
+                    Misi kalian belum berakhir!
+                </p>
+                <div class="mission-box" style="font-size: 24px;">
+                    📸 Cari dan foto <strong>5 BENDA</strong> di rumahmu<br>
+                    yang termasuk <strong>BANGUN DATAR</strong><br><br>
+                    📸 Cari dan foto <strong>5 BENDA</strong> di rumahmu<br>
+                    yang termasuk <strong>BANGUN RUANG</strong><br><br>
+                    Kumpulkan bukti fotomu di sesi berikutnya!
+                </div>
+                <p class="content-text" style="margin-top: 30px; font-size: 22px;">
+                    💡 <strong>Tips:</strong> Jangan lupa tulis nama benda dan jenis bentuknya!
+                </p>
+                <div style="margin-top: 30px; padding: 20px; background: #c41e3a; color: #fff; border-radius: 10px;">
+                    <p style="font-size: 24px; font-weight: bold;">
+                        🕵️ Selamat Menjalankan Misi, Agen! 🕵️
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Navigation -->
+        <div class="navigation">
+            <button class="nav-btn" onclick="prevSlide()">◀ SEBELUMNYA</button>
+            <button class="nav-btn" onclick="nextSlide()">SELANJUTNYA ▶</button>
+        </div>
+    </div>
+    
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 27;
+        
+        function showSlide(n) {
+            const slides = document.querySelectorAll('.slide');
+            if (n > totalSlides) currentSlide = totalSlides;
+            if (n < 1) currentSlide = 1;
+            
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[currentSlide - 1].classList.add('active');
+            
+            document.getElementById('current-slide').textContent = currentSlide;
+        }
+        
+        function nextSlide() {
+            currentSlide++;
+            if (currentSlide > totalSlides) currentSlide = totalSlides;
+            showSlide(currentSlide);
+        }
+        
+        function prevSlide() {
+            currentSlide--;
+            if (currentSlide < 1) currentSlide = 1;
+            showSlide(currentSlide);
+        }
+        
+        // Keyboard navigation
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowRight') nextSlide();
+            if (event.key === 'ArrowLeft') prevSlide();
+        });
+        
+        // Initialize
+        showSlide(currentSlide);
+    </script>
+</body>
+</html>
