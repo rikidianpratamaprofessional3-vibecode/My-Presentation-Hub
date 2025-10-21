@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pengenalan Pecahan - Discovery Learning</title>
+    <!-- Load Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Inter Font from Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    <style>
+        /* Custom styles for the presentation */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0fdfa; /* Mint Green Light Background */
+        }
+        .slide-container {
+            min-height: 80vh;
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+            opacity: 0;
+            transform: scale(0.98);
+        }
+        .slide-container.active {
+            opacity: 1;
+            transform: scale(1);
+        }
+        .accent-bg {
+            background-color: #ecfdf5; /* Light mint green for accents */
+        }
+        .main-color {
+            color: #06b6d4; /* Cyan 600 - Main color */
+        }
+        .main-bg {
+            background-color: #06b6d4;
+        }
+        .btn-primary {
+            @apply px-6 py-3 font-semibold text-white rounded-xl shadow-lg transition duration-300 ease-in-out main-bg hover:bg-cyan-700 disabled:opacity-50 disabled:cursor-not-allowed;
+        }
+        .slide-card {
+            @apply bg-white p-8 md:p-12 rounded-3xl shadow-2xl border-b-4 border-cyan-400/50;
+        }
+        .step-pill {
+            @apply inline-block px-4 py-1 text-sm font-bold rounded-full main-bg text-white shadow-md;
+        }
+        .question-card {
+            @apply bg-blue-50/70 p-4 rounded-xl mb-4 border-l-4 border-blue-400;
+        }
+        .emoji-title {
+             /* Use system font for emojis to ensure they display correctly */
+            font-family: inherit;
+        }
+        .task-reward-header {
+            @apply text-2xl font-extrabold text-gray-800 mb-6;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <!-- Header & Student Info -->
+    <header class="flex justify-between items-center mb-6 p-4 rounded-xl accent-bg shadow-md">
+        <div>
+            <span class="text-xs font-medium text-gray-600">Sesi Belajar Bersama</span>
+            <h1 id="student-name-display" class="text-xl font-bold main-color">Halo, Arkan!</h1>
+        </div>
+        <div class="text-right">
+            <span class="text-sm font-medium text-gray-700">Kelas 5 / IND 1-1 MT 068</span>
+            <span class="block text-xs text-gray-500">Discovery Learning 💡</span>
+        </div>
+    </header>
+
+    <!-- Main Slide Area -->
+    <main class="max-w-4xl mx-auto">
+        <div id="slide-display" class="slide-container active">
+            <!-- Content will be injected here -->
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="flex justify-between mt-8 p-4 bg-white/80 rounded-xl shadow-inner backdrop-blur-sm sticky bottom-0 z-10">
+            <button id="prev-btn" class="btn-primary" disabled>
+                &larr; Slide Sebelumnya
+            </button>
+            <span id="slide-indicator" class="text-lg font-bold main-color self-center">1/20</span>
+            <button id="next-btn" class="btn-primary">
+                Slide Selanjutnya &rarr;
+            </button>
+        </div>
+    </main>
+
+    <!-- JavaScript Logic -->
+    <script>
+        const slidesData = [
+            // SLIDE 1 — Opening
+            {
+                title: "Selamat Datang di Dunia Pecahan! 📊",
+                subtitle: "Konsep Rasional & Perbandingan",
+                content: `
+                    <p class="text-lg mb-4 text-gray-600">Hei, <strong id="dynamic-student-name">Arkan</strong>! Siap untuk sesi eksplorasi matematika hari ini?</p>
+                    <ul class="list-disc list-inside space-y-2 ml-4">
+                        <li><strong>📚 Tujuan Belajar:</strong> Mengenal, menyederhanakan, dan mengurutkan Pecahan Senilai.</li>
+                        <li><strong>💡 Metode Kita:</strong> Discovery Learning! Kamu yang akan menemukan rahasia-rahasia pecahan ini.</li>
+                        <li><strong>⏱️ Durasi Sesi:</strong> Siapkan fokus terbaikmu selama 60 menit.</li>
+                    </ul>
+                    <div class="mt-6 p-4 rounded-xl accent-bg border border-cyan-200">
+                        <p class="font-semibold main-color">🎲 Siapa tahu kamu menemukan cara baru yang unik untuk memecahkan masalah pecahan!</p>
+                    </div>
+                `,
+                stage: "Opening"
+            },
+            // SLIDE 2 — Aturan & Mindset
+            {
+                title: "🎲 Aturan Main & Mindset Discovery Learning",
+                subtitle: "Mari kita petakan perjalanan belajarmu!",
+                content: `
+                    <p class="text-lg mb-4">Kita akan melalui 6 tahapan penting:</p>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-3 text-center">
+                        <span class="step-pill">1. Reminder</span>
+                        <span class="step-pill">2. Memahami</span>
+                        <span class="step-pill">3. Implementasi</span>
+                        <span class="step-pill">4. Evaluasi</span>
+                        <span class="step-pill">5. Analisa</span>
+                        <span class="step-pill">6. Create!</span>
+                    </div>
+                    <ul class="list-disc list-inside space-y-2 mt-6 ml-4">
+                        <li><strong>💬 Mindset:</strong> Jangan takut salah! Setiap jawaban adalah petunjuk.</li>
+                        <li><strong>💡 Tantangan:</strong> “Temukan sendiri rahasia di balik pecahan senilai!”</li>
+                        <li><strong>🔑 Kunci:</strong> Berpikir seperti detektif, mencari pola, dan membuktikan sendiri.</li>
+                    </ul>
+                `,
+                stage: "Aturan"
+            },
+            // SLIDE 3 — Reminder: Apa itu Pecahan?
+            {
+                title: "Reminder: Apa Itu Pecahan? 🍰",
+                subtitle: "Pecahan ada di mana-mana!",
+                content: `
+                    <p class="text-lg mb-4 main-color font-semibold">Tanya Jawab Kilat:</p>
+                    <ul class="list-disc list-inside space-y-2 ml-4">
+                        <li><strong>Contoh 1:</strong> Kamu memotong kue menjadi 8 bagian sama. Kamu makan 1 bagian. Berapa bagian yang kamu makan?</li>
+                        <li><strong>Contoh 2:</strong> Lihat jam! Berapa pecahan dari satu jam adalah 30 menit?</li>
+                        <li><strong>Aktivitas:</strong> Sebutkan 3 contoh pecahan yang kamu lihat di sekitar ruangan ini atau dalam kegiatan sehari-hari!</li>
+                    </ul>
+                    <div class="mt-6 p-4 text-center">
+                        <p class="text-3xl">🍕 <strong class="main-color">1/2</strong> - Sepotong Pizza</p>
+                        <p class="text-3xl">⌛ <strong class="main-color">1/4</strong> - 15 Menit dari Satu Jam</p>
+                    </div>
+                `,
+                stage: "Reminder"
+            },
+            // SLIDE 4 — Reminder Challenge
+            {
+                title: "Reminder Challenge: Mana yang Lebih Besar? 🤔",
+                subtitle: "Perbandingan Awal",
+                content: `
+                    <p class="text-xl mb-6 font-bold text-gray-700">Bandingkan ketiga pecahan ini!</p>
+                    <div class="flex justify-around items-center text-4xl mb-8 p-4 accent-bg rounded-xl">
+                        <span class="main-color"><strong>1/2</strong></span>
+                        <span class="text-gray-500">vs</span>
+                        <span class="main-color"><strong>2/3</strong></span>
+                        <span class="text-gray-500">vs</span>
+                        <span class="main-color"><strong>3/4</strong></span>
+                    </div>
+                    <ul class="list-disc list-inside space-y-2 ml-4">
+                        <li><strong>❓ Diskusi Mini:</strong> Menurutmu, mana yang nilainya paling besar? Beri alasan logis!</li>
+                        <li><strong>💭 Tantangan:</strong> Cobalah membayangkan bentuk visualnya (misalnya, potongan cokelat).</li>
+                        <li><strong>💡 Tips:</strong> Semakin besar pembilang mendekati penyebut, semakin besar nilainya! (jika penyebut sama)</li>
+                    </ul>
+                `,
+                stage: "Reminder"
+            },
+            // SLIDE 5 — Memahami Konsep Pecahan Senilai
+            {
+                title: "Memahami: Rahasia Pecahan Senilai! 🧩",
+                subtitle: "Nilai Sama, Tampilan Beda",
+                content: `
+                    <p class="text-xl mb-4 text-gray-700 font-semibold">Lihat visual berikut:</p>
+                    <div class="flex justify-center space-x-8 mb-6">
+                        <div class="text-center">
+                            <div class="w-24 h-6 main-bg rounded overflow-hidden shadow-md">
+                                <div class="w-1/2 h-full bg-cyan-700/60"></div>
+                            </div>
+                            <p class="mt-2 text-lg font-bold">1/2</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="w-24 h-6 main-bg rounded overflow-hidden shadow-md">
+                                <div class="w-2/4 h-full bg-cyan-700/60 flex">
+                                    <div class="w-1/2 h-full"></div>
+                                    <div class="w-1/2 h-full"></div>
+                                </div>
+                            </div>
+                            <p class="mt-2 text-lg font-bold">2/4</p>
+                        </div>
+                    </div>
+                    <ul class="list-disc list-inside space-y-2 ml-4">
+                        <li><strong>Visualisasi:</strong> Kedua pecahan ($\frac{1}{2}$ dan $\frac{2}{4}$) menempati bagian yang SAMA BESAR.</li>
+                        <li><strong>Rumus Tersembunyi:</strong> $1 \times 2 = 2$ dan $2 \times 2 = 4$. Kita hanya mengalikan (atau membagi) pembilang dan penyebut dengan angka yang sama!</li>
+                        <li><strong>❓ Pertanyaan Reflektif:</strong> “Mengapa mereka sama nilainya? Apa yang tidak berubah dari mereka?”</li>
+                    </ul>
+                `,
+                stage: "Memahami"
+            },
+            // SLIDE 6 — Menyederhanakan Pecahan
+            {
+                title: "Menyederhanakan Pecahan 📐",
+                subtitle: "Mencari Bentuk Paling 'Rapi'",
+                content: `
+                    <p class="text-lg mb-4">Menyederhanakan adalah mencari pecahan senilai yang paling sederhana (tidak bisa dibagi lagi).</p>
+                    <div class="p-4 accent-bg rounded-xl mb-6">
+                        <p class="text-xl font-bold main-color">Contoh Proses: ${12}/{20}$</p>
+                        <ul class="list-decimal list-inside ml-4 mt-2">
+                            <li>Cari Pembagi Bersama Terbesar (FPB) antara 12 dan 20 (yaitu 4).</li>
+                            <li>Bagi pembilang dan penyebut dengan FPB tersebut.</li>
+                            <li>$\\frac{12 \\div 4}{20 \\div 4} = \\frac{3}{5}$. Selesai!</li>
+                        </ul>
+                    </div>
+                    <ul class="list-disc list-inside space-y-2 ml-4">
+                        <li><strong>🔑 Kunci:</strong> Kita harus membagi pembilang **DAN** penyebut dengan angka yang sama.</li>
+                        <li><strong>🔥 Tantangan:</strong> Cepat, sebutkan FPB dari $15/45$!</li>
+                    </ul>
+                `,
+                stage: "Memahami"
+            },
+            // SLIDE 7 — Mengurutkan Pecahan
+            {
+                title: "Mengurutkan Pecahan $\\uparrow$ $\\downarrow$",
+                subtitle: "Siapa yang Paling Banyak?",
+                content: `
+                    <p class="text-lg mb-4">Untuk mengurutkan, kita perlu membuat pecahan-pecahan tersebut setara (memiliki penyebut yang sama).</p>
+                    <div class="p-4 rounded-xl shadow-inner mb-6">
+                        <p class="text-xl font-bold main-color">Aktivitas: Urutkan $\\frac{1}{3}, \\frac{1}{2}, \\frac{2}{3}, \\frac{3}{4}$</p>
+                        <ul class="list-disc list-inside ml-4 mt-2 text-sm">
+                            <li>KPK dari 3, 2, dan 4 adalah 12.</li>
+                            <li>Ubah semua ke penyebut 12: $\\frac{4}{12}, \\frac{6}{12}, \\frac{8}{12}, \\frac{9}{12}$.</li>
+                        </ul>
+                    </div>
+                    <ul class="list-disc list-inside space-y-2 ml-4">
+                        <li><strong>📈 Urutan:</strong> $\\frac{1}{3}, \\frac{1}{2}, \\frac{2}{3}, \\frac{3}{4}$</li>
+                        <li><strong>💡 Tips Berpikir Rasional:</strong> Semakin besar nilai pembilang setelah penyebutnya disamakan, semakin besar nilai pecahannya.</li>
+                        <li><strong>📘 Konsep Rasional:</strong> Semua pecahan ini adalah Bilangan Rasional karena dapat ditulis sebagai perbandingan dua bilangan bulat (a/b).</li>
+                    </ul>
+                `,
+                stage: "Memahami"
+            },
+            // SLIDE 8 — Real World Connection
+            {
+                title: "Real World Connection: Pesta Kue 🍰",
+                subtitle: "Konsep Rasional dalam Pembagian",
+                content: `
+                    <p class="text-xl mb-4 font-semibold text-gray-700">Kasus:</p>
+                    <ul class="list-disc list-inside space-y-2 ml-4">
+                        <li>Ibu membuat 1 kue yang sama.</li>
+                        <li>Kamu mendapat $\\frac{1}{3}$ bagian.</li>
+                        <li>Adikmu mendapat $\\frac{2}{6}$ bagian.</li>
+                        <li>Tetangga mendapat $\\frac{1}{4}$ bagian.</li>
+                    </ul>
+                    <div class="mt-6 p-4 accent-bg rounded-xl border border-cyan-200">
+                        <p class="font-bold main-color">💬 Diskusi Logika:</p>
+                        <ol class="list-decimal list-inside ml-4 mt-2">
+                            <li>Siapa yang mendapat bagian terbesar?</li>
+                            <li>Apakah pembagian antara kamu dan adikmu adil? Mengapa?</li>
+                            <li>Berapa sisa kue yang tersisa? (Gunakan konsep menyamakan penyebut!)</li>
+                        </ol>
+                    </div>
+                `,
+                stage: "Implementasi"
+            },
+            // SLIDE 9 — Implementasi: Guided Practice
+            {
+                title: "Implementasi: Guided Practice 💡",
+                subtitle: "Mari Coba 5 Soal Kontekstual",
+                content: `
+                    <p class="text-lg mb-4">Gunakan strategi menyederhanakan atau menyamakan penyebut untuk memecahkan ini!</p>
+                    <div class="space-y-3">
+                        <div class="question-card">1. Ayah membagi $15$ buah apel ke dalam $3$ keranjang sama besar. Tuliskan pecahan apel di setiap keranjang!</div>
+                        <div class="question-card">2. Tentukan pecahan senilai dari $3/5$ yang penyebutnya $25$.</div>
+                        <div class="question-card">3. Sederhanakan $\\frac{36}{48}$ ke bentuk paling sederhana.</div>
+                        <div class="question-card">4. Jika $A/14 = 3/7$, berapa nilai $A$?</div>
+                        <div class="question-card">5. Urutkan $\\frac{4}{9}, \\frac{1}{3}, \\frac{2}{3}$ dari yang terkecil.</div>
+                    </div>
+                    <p class="mt-4 font-bold main-color">💬 Diskusikan Solusi Ganda: Apakah ada cara cepat untuk menjawab soal no. 4?</p>
+                `,
+                stage: "Implementasi"
+            },
+            // SLIDE 10 — Evaluasi (Mini Reflection)
+            {
+                title: "Evaluasi: Mini Reflection 💭",
+                subtitle: "Cek Pemahamanmu",
+                content: `
+                    <p class="text-xl mb-6 font-bold text-gray-700">Jawab dengan 1-2 kalimat!</p>
+                    <ul class="list-disc list-inside space-y-4 ml-4">
+                        <li><strong>❓ Pola Umum:</strong> Apa pola umum yang kamu temukan dari semua Pecahan Senilai? (Hubungannya dengan perkalian/pembagian)</li>
+                        <li><strong>🔑 Bukti Kesetaraan:</strong> Bagaimana cara paling mudah membuktikan dua pecahan setara, misalnya $\\frac{5}{10}$ dan $\\frac{1}{2}$?</li>
+                        <li><strong>Visualisasi:</strong> Gambarlah secara cepat di buku/papan, representasi visual yang membuktikan $\\frac{2}{6} = \\frac{1}{3}$.</li>
+                    </ul>
+                    <div class="mt-6 p-4 text-center text-sm text-gray-500">
+                        <p>Fokus pada konsep, bukan hanya prosedur! 🙌</p>
+                    </div>
+                `,
+                stage: "Evaluasi"
+            },
+            // SLIDE 11 — Analisa
+            {
+                title: "Analisa: Membongkar Logika Pecahan 🧐",
+                subtitle: "Berpikir Kritis",
+                content: `
+                    <p class="text-xl mb-4 font-semibold main-color">Bandingkan Strategi Menyederhanakan:</p>
+                    <ul class="list-disc list-inside space-y-2 ml-4">
+                        <li><strong>Strategi 1:</strong> Menyederhanakan $\\frac{18}{36}$ dengan membagi 2, lalu bagi 3, lalu bagi 3 lagi.</li>
+                        <li><strong>Strategi 2:</strong> Menyederhanakan $\\frac{18}{36}$ dengan langsung membagi FPB (18).</li>
+                    </ul>
+                    <div class="mt-6 p-4 accent-bg rounded-xl">
+                        <p class="font-bold text-lg main-color">Aktivitas Analisis:</p>
+                        <ol class="list-decimal list-inside ml-4 mt-2">
+                            <li>Jelaskan alasan logis mengapa Strategi 2 lebih efisien!</li>
+                            <li>Pertanyaan: “Apakah ada cara lain membandingkan $\\frac{3}{4}$ dan $\\frac{2}{3}$ selain menyamakan penyebut? (Misalnya, melihat jaraknya ke $1$)"</li>
+                        </ol>
+                    </div>
+                `,
+                stage: "Analisa"
+            },
+            // SLIDE 12 — Create!
+            {
+                title: "Create! Pahlawan Pecahan 🎨",
+                subtitle: "Waktunya Kreativitas",
+                content: `
+                    <p class="text-xl mb-4 font-semibold text-gray-700">Saatnya menggunakan apa yang sudah kamu temukan!</p>
+                    <ul class="list-disc list-inside space-y-3 ml-4">
+                        <li><strong>🖼️ Tugas Mini:</strong> Buat 1 ilustrasi (gambar, diagram, atau bentuk) di bukumu yang menunjukkan pecahan senilai $\\frac{4}{6} = \\frac{2}{3}$.</li>
+                        <li><strong>🚀 Ide Proyek (Optional):</strong> Rancang poster mini berjudul “Rahasia Pecahan Senilai” menggunakan warna, bentuk, atau bahkan cerita.</li>
+                        <li><strong>🧠 Dorongan Kreativitas:</strong> Gunakan objek sehari-hari (cokelat, pizza, pulpen, dll.) untuk membuat ilustrasimu.</li>
+                    </ul>
+                    <div class="mt-6 p-4 text-center main-bg text-white rounded-xl shadow-lg">
+                        <p class="font-bold text-lg">💡 Matematika adalah alat untuk menciptakan hal baru!</p>
+                    </div>
+                `,
+                stage: "Create"
+            },
+            // SLIDE 13 — Task Reward: Basic & Menengah (2 Soal)
+            {
+                title: "Task Reward: Basic & Menengah 🎯 (1/2)",
+                subtitle: "Asah Dasar-Dasar",
+                content: `
+                    <p class="task-reward-header">Level 1: Basic (Tujuan: Identifikasi & Nilai)</p>
+                    <div class="question-card"><strong>1. Tuliskan bentuk pecahan</strong> dari dua bagian yang diarsir dari 5 bagian yang sama.</div>
+                    <div class="question-card"><strong>2. Pecahan senilai:</strong> Pecahan berapakah yang senilai dengan $\\frac{1}{3}$ jika pembilangnya adalah 4?</div>
+                    
+                    <p class="task-reward-header mt-8">Level 2: Menengah (Tujuan: Menyederhanakan Sederhana)</p>
+                    <div class="question-card"><strong>3. Sederhanakan</strong> pecahan $\\frac{18}{24}$ ke bentuk paling sederhana.</div>
+                `,
+                stage: "Task Reward"
+            },
+            // SLIDE 14 — Task Reward: Basic & Menengah (3 Soal)
+            {
+                title: "Task Reward: Basic & Menengah 🎯 (2/2)",
+                subtitle: "Perbandingan Cepat",
+                content: `
+                    <p class="task-reward-header">Level 1 & 2 Lanjutan</p>
+                    <div class="question-card"><strong>4. Bandingkan:</strong> Manakah yang lebih besar: $\\frac{5}{7}$ atau $\\frac{2}{7}$? Berikan alasanmu!</div>
+                    <div class="question-card"><strong>5. Urutkan:</strong> Urutkan pecahan berikut dari yang terkecil: $\\frac{1}{5}, \\frac{4}{5}, \\frac{2}{5}$.</div>
+                    <p class="mt-6 font-bold main-color">Total 5 Soal Basic & Menengah Selesai! Lanjut ke MOTS (Middle Order Thinking Skills).</p>
+                `,
+                stage: "Task Reward"
+            },
+            // SLIDE 15 — Task Reward: MOTS (4 Soal)
+            {
+                title: "Task Reward: MOTS 📊 (1/3)",
+                subtitle: "Fokus pada Penalaran Logis & Strategi Visual",
+                content: `
+                    <p class="task-reward-header">Level 3: MOTS (Tujuan: Penalaran Senilai)</p>
+                    <div class="question-card"><strong>6. Analisa Kue:</strong> Jika Risa memakan $\\frac{1}{4}$ bagian kue dan Doni memakan $\\frac{2}{8}$ bagian kue yang sama, apakah bagian yang mereka makan senilai? Jelaskan.</div>
+                    <div class="question-card"><strong>7. Sederhanakan Kompleks:</strong> Sederhanakan pecahan $\\frac{45}{75}$. Tunjukkan langkah-langkah pembagiannya (bisa bertahap).</div>
+                    <div class="question-card"><strong>8. Bandingkan Beda Penyebut:</strong> Bandingkan $\\frac{3}{4}$ dan $\\frac{7}{10}$. Tunjukkan pecahan mana yang lebih besar.</div>
+                    <div class="question-card"><strong>9. Lengkapi Senilai:</strong> Lengkapi pecahan senilai: $\\frac{4}{5} = \\frac{?}{20}$.</div>
+                `,
+                stage: "Task Reward"
+            },
+            // SLIDE 16 — Task Reward: MOTS (4 Soal)
+            {
+                title: "Task Reward: MOTS 📊 (2/3)",
+                subtitle: "Mengurai Pecahan",
+                content: `
+                    <p class="task-reward-header">Level 3: MOTS Lanjutan</p>
+                    <div class="question-card"><strong>10. Ubah Pembilang:</strong> Ubah pecahan $\\frac{6}{18}$ menjadi pecahan senilai dengan pembilang $1$.</div>
+                    <div class="question-card"><strong>11. Aplikasi Persentase:</strong> Dalam sebuah kotak berisi $30$ kelereng. $\\frac{2}{5}$ dari kelereng berwarna biru. Berapa kelereng biru yang ada?</div>
+                    <div class="question-card"><strong>12. Mencari Jarak:</strong> Tuliskan tiga pecahan yang terletak di antara $\\frac{1}{2}$ dan $1$.</div>
+                    <div class="question-card"><strong>13. Kasus Tali:</strong> Sebuah tali dipotong menjadi 6 bagian yang sama. Tono mengambil 2 bagian, dan Sinta mengambil $\\frac{1}{3}$ bagian. Siapa yang mengambil tali lebih panjang?</div>
+                `,
+                stage: "Task Reward"
+            },
+            // SLIDE 17 — Task Reward: MOTS (2 Soal)
+            {
+                title: "Task Reward: MOTS 📊 (3/3)",
+                subtitle: "Penalaran Terakhir MOTS",
+                content: `
+                    <p class="task-reward-header">Level 3: MOTS Terakhir</p>
+                    <div class="question-card"><strong>14. Urutan Berbeda Penyebut:</strong> Urutkan pecahan $\\frac{1}{3}, \\frac{2}{5}, \\frac{1}{2}$ dari yang terbesar.</div>
+                    <div class="question-card"><strong>15. Bukti Visual:</strong> Tunjukkan visual (deskripsi atau sketsa di papan) pecahan $\\frac{3}{6}$ dan $\\frac{1}{2}$. Mengapa keduanya senilai?</div>
+                    <p class="mt-6 font-bold main-color">Total 10 Soal MOTS Selesai! Bersiap untuk tantangan HOTS!</p>
+                `,
+                stage: "Task Reward"
+            },
+            // SLIDE 18 — Task Reward: HOTS (5 Soal)
+            {
+                title: "Task Reward: HOTS 📈 (1/2)",
+                subtitle: "Tantangan Berpikir Kritis & Kreatif",
+                content: `
+                    <p class="task-reward-header">Level 4: HOTS (Tujuan: Analisis, Kreativitas, Kasus Kompleks)</p>
+                    <div class="space-y-3">
+                        <div class="question-card"><strong>16. Kasus Pizza:</strong> Andi, Budi, dan Citra berbagi pizza. Andi mendapat $\\frac{3}{8}$. Budi mendapat $\\frac{1}{4}$. Berapa bagian yang didapat Citra agar pizza habis? Siapa yang mendapat bagian paling sedikit?</div>
+                        <div class="question-card"><strong>17. Analisa Rumus:</strong> Jika kamu mengalikan pembilang dan penyebut dari $\\frac{a}{b}$ dengan angka yang sama ($k$), apakah pecahan yang dihasilkan selalu senilai? Mengapa atau mengapa tidak?</div>
+                        <div class="question-card"><strong>18. Perbandingan Logis:</strong> Jelaskan mengapa $\\frac{99}{100}$ pasti lebih besar dari $\\frac{4}{5}$ tanpa menghitung desimal atau menyamakan penyebut.</div>
+                        <div class="question-card"><strong>19. Desain Permainan:</strong> Rancang 3 aturan sederhana untuk sebuah permainan "Kartu Pecahan Senilai". Bagaimana pemain bisa menang?</div>
+                        <div class="question-card"><strong>20. Konsep Rasional:</strong> Sebuah botol berisi $0.75$ liter air. Tuliskan volume ini sebagai pecahan paling sederhana. Jelaskan mengapa ini adalah bilangan rasional.</div>
+                    </div>
+                `,
+                stage: "Task Reward"
+            },
+            // SLIDE 19 — Task Reward: HOTS (5 Soal)
+            {
+                title: "Task Reward: HOTS 📈 (2/2)",
+                subtitle: "Uji Pemecahan Masalah",
+                content: `
+                    <p class="task-reward-header">Level 4: HOTS Terakhir</p>
+                    <div class="space-y-3">
+                        <div class="question-card"><strong>21. Sudut Pandang Kritis:</strong> Seseorang mengatakan bahwa menyederhanakan pecahan adalah proses "membuat pecahan lebih adil." Apakah kamu setuju? Jelaskan sudut pandangmu.</div>
+                        <div class="question-card"><strong>22. Pola Pecahan:</strong> Temukan pola pada deret pecahan ini dan tuliskan dua pecahan berikutnya: $\\frac{1}{2}, \\frac{2}{4}, \\frac{3}{6}, \\frac{4}{8}, \\dots$</div>
+                        <div class="question-card"><strong>23. Membandingkan Jarak:</strong> Jika kamu berjalan $\\frac{2}{3}$ km dan temanmu berjalan $\\frac{5}{6}$ km, berapa selisih jarak dalam bentuk pecahan paling sederhana?</div>
+                        <div class="question-card"><strong>24. Tantangan Visual:</strong> Gambarkan sebuah bentuk (bukan lingkaran atau persegi) dan arsir $\\frac{2}{5}$ bagiannya. Bagaimana kamu membuktikan arsirannya benar?</div>
+                        <div class="question-card"><strong>25. Aplikasi Sisa:</strong> Seorang pedagang memiliki $12$ kg buah. Ia menjual $\\frac{3}{4}$ dari total buah. Berapa kg buah yang tersisa?</div>
+                    </div>
+                    <p class="mt-6 font-bold main-color">🥳 Selesai! Semua 25 soal berhasil kamu hadapi!</p>
+                `,
+                stage: "Task Reward"
+            },
+            // SLIDE 20 — Closing & Reflection
+            {
+                title: "Closing: Penemuan Hebatmu Hari Ini! 💡",
+                subtitle: "Saatnya Merefleksikan Diri",
+                content: `
+                    <p class="text-xl mb-4 font-bold main-color">Ringkasan:</p>
+                    <ul class="list-disc list-inside space-y-2 ml-4">
+                        <li>Kamu telah <strong>menemukan</strong> pola di balik Pecahan Senilai (perkalian/pembagian angka yang sama).</li>
+                        <li>Kamu bisa <strong>menyederhanakan</strong> pecahan ke bentuk paling rapi (FPB).</li>
+                        <li>Kamu bisa <strong>mengurutkan</strong> pecahan dengan menyamakan penyebut (KPK).</li>
+                        <li>Kamu adalah seorang <strong>penemu</strong>, bukan hanya penghitung!</li>
+                    </ul>
+                    <div class="mt-8 p-4 bg-yellow-50/70 border border-yellow-300 rounded-xl">
+                        <p class="font-bold text-lg text-yellow-700">📣 Parent Reminder:</p>
+                        <p class="text-sm mt-2">Bantu Arkan belajar pecahan lewat kegiatan sehari-hari (memasak $\rightarrow$ resep $\frac{1}{2}$ cangkir, membagi makanan, waktu $\rightarrow$ $\frac{1}{4}$ jam). Pembelajaran berlanjut di rumah!</p>
+                    </div>
+                    <p class="mt-6 text-2xl text-center italic text-gray-700">
+                        “Belajar matematika bukan soal angka, tapi soal cara berpikir.” 💡
+                    </p>
+                `,
+                stage: "Closing"
+            }
+        ];
+
+        let currentSlideIndex = 0;
+        const slideDisplay = document.getElementById('slide-display');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const slideIndicator = document.getElementById('slide-indicator');
+        const totalSlides = slidesData.length;
+
+        function renderSlide(index) {
+            const slide = slidesData[index];
+
+            // Start fade out/scale down transition
+            slideDisplay.classList.remove('active');
+
+            setTimeout(() => {
+                // Clear and inject content
+                slideDisplay.innerHTML = `
+                    <div class="slide-card">
+                        <span class="step-pill mb-4">${slide.stage.toUpperCase()}</span>
+                        <h2 class="text-3xl md:text-4xl font-extrabold main-color mb-3 emoji-title">${slide.title}</h2>
+                        <h3 class="text-xl md:text-2xl text-gray-500 mb-6">${slide.subtitle}</h3>
+                        <div class="text-gray-700 leading-relaxed">${slide.content}</div>
+                    </div>
+                `;
+
+                // Update controls
+                prevBtn.disabled = index === 0;
+                nextBtn.disabled = index === totalSlides - 1;
+                slideIndicator.textContent = `${index + 1}/${totalSlides}`;
+
+                // End fade in/scale up transition
+                slideDisplay.classList.add('active');
+
+                // Update dynamic student name if needed
+                const dynamicName = document.getElementById('dynamic-student-name');
+                if (dynamicName) {
+                    dynamicName.textContent = getStudentName();
+                }
+
+            }, 500); // Duration matches CSS transition
+        }
+
+        function navigate(direction) {
+            let newIndex = currentSlideIndex + direction;
+            if (newIndex >= 0 && newIndex < totalSlides) {
+                currentSlideIndex = newIndex;
+                renderSlide(currentSlideIndex);
+            }
+        }
+
+        function getStudentName() {
+            // Check the hardcoded name from the prompt/slide 1
+            return "Arkan";
+        }
+
+        // Event Listeners
+        prevBtn.addEventListener('click', () => navigate(-1));
+        nextBtn.addEventListener('click', () => navigate(1));
+
+        // Initial render
+        renderSlide(currentSlideIndex);
+    </script>
+</body>
+</html>
