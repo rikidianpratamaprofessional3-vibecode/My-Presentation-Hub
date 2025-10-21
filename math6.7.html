@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operasi Campuran: Menemukan Logika</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-blue': '#1E3A8A', // Solid Blue - Dark
+                        'secondary-blue': '#2563EB', // Solid Blue - Medium
+                        'accent-yellow': '#FBBF24', // Yellow for stars/accents
+                        'soft-gray': '#F9FAFB',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .slide-container {
+            min-height: 80vh;
+            transition: opacity 0.5s ease-in-out;
+            background-color: #fff;
+        }
+        .slide-content {
+            padding: 2rem;
+        }
+        .challenge-box {
+            background-color: #DBEAFE; /* Light Blue BG */
+            border-left: 5px solid #2563EB;
+        }
+        .star-icon {
+            text-shadow: 0 0 5px rgba(251, 191, 36, 0.7);
+        }
+    </style>
+</head>
+<body class="bg-soft-gray flex justify-center items-center p-4">
+
+<!-- FIREBASE CONFIGURATION (MANDATORY SETUP) -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    // Global variables (MUST be initialized using __app_id and __firebase_config)
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+    const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+    const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+    if (Object.keys(firebaseConfig).length > 0) {
+        const app = initializeApp(firebaseConfig);
+        window.db = getFirestore(app);
+        window.auth = getAuth(app);
+        
+        // Authentication Logic
+        onAuthStateChanged(window.auth, async (user) => {
+            if (!user) {
+                try {
+                    if (initialAuthToken) {
+                        await signInWithCustomToken(window.auth, initialAuthToken);
+                    } else {
+                        await signInAnonymously(window.auth);
+                    }
+                    const userId = window.auth.currentUser?.uid || crypto.randomUUID();
+                    console.log("Firebase Auth Ready. User ID:", userId);
+                    // Optional: Save initial star count (though we use local JS state for this app)
+                    const userRef = doc(window.db, `artifacts/${appId}/users/${userId}/progress/math_logic`);
+                    await setDoc(userRef, { lastLogin: new Date().toISOString() }, { merge: true });
+
+                } catch (error) {
+                    console.error("Firebase Auth Error:", error);
+                }
+            }
+        });
+    } else {
+        console.warn("Firebase configuration not found. Running without persistence.");
+    }
+</script>
+
+<!-- MAIN APPLICATION CONTAINER -->
+<div id="app" class="w-full max-w-4xl shadow-2xl rounded-xl overflow-hidden bg-white">
+    
+    <!-- HEADER -->
+    <header class="bg-primary-blue text-white p-4 flex justify-between items-center rounded-t-xl">
+        <h1 class="text-xl font-bold">Presentasi: Operasi Campuran</h1>
+        <div class="flex items-center space-x-4">
+            <span class="text-sm">👤 Ezra (Kelas 6)</span>
+            <div id="star-counter" class="text-lg font-extrabold flex items-center bg-accent-yellow text-primary-blue py-1 px-3 rounded-full">
+                <span id="star-count">0</span> ⭐
+            </div>
+        </div>
+    </header>
+
+    <!-- SLIDE AREA -->
+    <main id="slide-area" class="p-8 slide-container">
+        <!-- Slide content will be injected here -->
+    </main>
+
+    <!-- FOOTER/NAVIGATION -->
+    <footer class="p-4 bg-gray-100 flex justify-between items-center rounded-b-xl border-t">
+        <button id="prev-btn" onclick="prevSlide()" class="px-4 py-2 bg-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-400 transition duration-150" disabled>
+            ← Slide Sebelumnya
+        </button>
+        <span id="slide-indicator" class="text-sm font-medium text-gray-600">Slide 1 dari 20</span>
+        <button id="next-btn" onclick="nextSlide()" class="px-4 py-2 bg-secondary-blue text-white font-semibold rounded-lg hover:bg-primary-blue transition duration-150">
+            Slide Selanjutnya →
+        </button>
+    </footer>
+
+</div>
+
+<!-- JAVASCRIPT LOGIC -->
+<script>
+    let currentSlideIndex = 0;
+    let logicStars = 0;
+    const totalSlides = 20;
+
+    // Hardcoded answers for interactive checks
+    const CHALLENGE_ANSWERS = {
+        // Slide 4: Diagnostic Warm-up
+        '4-1': 17, // 9 + 4 * 2
+        '4-2': 8,  // 18 / 3 + 2
+        '4-3': 18, // (6 + 3) * 2
+        '4-4': 27, // 30 - 12 / 4
+        '4-5': 16, // 8 * (5 - 3)
+
+        // Slide 6: Real World (Result)
+        '6-1': 12, // (36 / 4) + 3
+
+        // Slide 9: Guided Practice (New Interactive)
+        '9-1': 10, // (24 ÷ 6) + (3 × 2)
+        '9-2': 35, // 45 – (15 ÷ 3) × 2
+        '9-3': 17, // 8 + (12 ÷ 4 × 3)
+        '9-4': 27, // (5 + 7) × 3 – 9
+        '9-5': 20, // (30 ÷ (5 + 1)) × 4
+        
+        // Slide 10: Independent Practice 1 (Result)
+        '10-1': 9, // (3 * 12) / 4
+
+        // Slide 12: Level 1 Q1-5 (We only check Q1, Q3, Q5)
+        '12-1': 6,  // (8 + 4) / 2
+        '12-3': 30, // 6 * (3 + 2)
+        '12-5': 24, // (9 - 3) * 4
+
+        // Slide 13: Level 2 Q6-10 (We only check Q6, Q8, Q10)
+        '13-6': 10, // 36 / (3 * 2) + 4
+        '13-8': 30, // 45 / (9 - 6) * 2
+        '13-10': 48, // 60 - (24 / 4) * 2
+
+        // Slide 14: Level 3 Q11, Q13, Q14
+        '14-11': 60, // (48 / 6 + 2) * 6
+        '14-13': 28, // (50 - 10) / (5 - 3) + 8 = 40 / 2 + 8 = 20 + 8 = 28
+        '14-14': 24, // 64 / (4 + 4) * 3 = 64 / 8 * 3 = 8 * 3 = 24
+
+        // Slide 15: HOTS Lanjutan (New Interactive)
+        '15-16': 99, // (72 ÷ 9 + 3) × 9
+        '15-19': 13, // (8 × 4) ÷ (2 + 2) + 5
+        '15-20': 12, // (12 ÷ 3) + (4 × 2)
+    };
+
+    const slides = [
+        {
+            title: "Opening: Detektif Matematika",
+            type: "text",
+            content: `
+                <h2 class="text-4xl font-extrabold text-primary-blue mb-4">Hai Ezra! 🌟</h2>
+                <p class="text-xl leading-relaxed mt-6">Hari ini kita bukan hanya menghitung, tapi <strong>menemukan logika di balik angka!</strong></p>
+                <p class="text-2xl font-semibold mt-4">Siap jadi <strong>detektif matematika</strong>? 🕵️‍♂️</p>
+                <p class="text-lg mt-8 p-4 bg-accent-yellow/20 rounded-lg border-l-4 border-accent-yellow">Tantangan hari ini: <strong>“Siapa duluan yang harus dihitung?”</strong></p>
+            `
+        },
+        {
+            title: "Tujuan Pembelajaran",
+            type: "text",
+            content: `
+                <h2 class="text-3xl font-bold text-primary-blue mb-6">🎯 Tujuan Pembelajaran</h2>
+                <p class="text-lg font-medium mb-4">Di akhir sesi, kamu akan bisa:</p>
+                <ul class="list-disc list-inside space-y-3 text-gray-700 ml-4">
+                    <li>Menjelaskan <strong>kenapa urutan operasi penting.</strong></li>
+                    <li>Menyelesaikan operasi campuran dengan logika langkah demi langkah.</li>
+                    <li>Mengubah <strong>cerita nyata jadi model matematika.</strong></li>
+                    <li>Menggunakan penalaran logis dalam menghitung hasil.</li>
+                </ul>
+            `
+        },
+        {
+            title: "Aturan Main (Gamifikasi)",
+            type: "text",
+            content: `
+                <h2 class="text-3xl font-bold text-primary-blue mb-6">🎯 Aturan Main</h2>
+                <div class="space-y-4 text-gray-700">
+                    <div class="p-3 bg-green-100 rounded-lg border-l-4 border-green-600">
+                        <p class="font-semibold text-lg">Setiap aktivitas punya <strong>tantangan logika.</strong></p>
+                    </div>
+                    <div class="p-3 bg-green-100 rounded-lg border-l-4 border-green-600 flex items-center">
+                        <p class="font-semibold text-lg">Jawaban benar = ⭐ 1 bintang logika.</p>
+                    </div>
+                    <div class="p-3 bg-green-100 rounded-lg border-l-4 border-green-600">
+                        <p class="font-semibold text-lg">Kumpulkan 10 bintang → raih gelar <strong>“Math Hero!” 🏅</strong></p>
+                    </div>
+                    <p class="text-secondary-blue font-medium italic mt-6">Jangan terburu-buru, pikirkan langkahnya.</p>
+                </div>
+            `
+        },
+        {
+            title: "Diagnostic Warm-up",
+            type: "challenge",
+            questions: [
+                { id: '4-1', text: '1️⃣ 9 + 4 × 2', hint: 'Kali/Bagi dikerjakan duluan.', inputType: 'number' },
+                { id: '4-2', text: '2️⃣ 18 ÷ 3 + 2', hint: 'Kali/Bagi dikerjakan duluan.', inputType: 'number' },
+                { id: '4-3', text: '3️⃣ (6 + 3) × 2', hint: 'Tanda Kurung adalah prioritas utama!', inputType: 'number' },
+                { id: '4-4', text: '4️⃣ 30 – 12 ÷ 4', hint: 'Bagi dulu, baru kurang.', inputType: 'number' },
+                { id: '4-5', text: '5️⃣ 8 × (5 – 3)', hint: 'Tanda Kurung adalah prioritas utama!', inputType: 'number' },
+            ],
+            content: `
+                <h2 class="text-3xl font-bold text-primary-blue mb-6">🧩 Diagnostic Warm-up: Race of Operations!</h2>
+                <p class="text-lg italic text-gray-600 mb-6">“Bukan seberapa cepat, tapi seberapa logis kamu berpikir.” Tulis jawaban akhirnya saja. (Ini bukan sesi pemberian bintang)</p>
+            `
+        },
+        {
+            title: "Cek Pemahaman Awal",
+            type: "text",
+            content: `
+                <h2 class="text-3xl font-bold text-primary-blue mb-6">🧠 Cek Pemahaman Awal</h2>
+                <div class="p-6 bg-yellow-50 rounded-lg shadow">
+                    <p class="text-xl font-semibold text-gray-700 mb-4">Kamu hebat kalau bisa:</p>
+                    <ul class="list-disc list-inside space-y-2 ml-4">
+                        <li>Menjelaskan urutan langkah dengan benar.</li>
+                        <li>Menjawab 3 dari 5 soal di Slide 4 dengan alasan logis.</li>
+                    </ul>
+                </div>
+                <div class="mt-8 text-center">
+                    <p class="text-2xl font-extrabold text-secondary-blue">🎯 Target: Kumpulkan 3 bintang logika pertama ⭐⭐⭐</p>
+                </div>
+            `
+        },
+        {
+            title: "Real World Connection",
+            type: "challenge",
+            questions: [
+                { id: '6-1', text: 'Model: (36 ÷ 4) + 3. Berapa total jeruknya sekarang?', hint: 'Jawab dengan angka hasil akhir.', inputType: 'number' },
+            ],
+            content: `
+                <h2 class="text-3xl font-bold text-primary-blue mb-6">🌍 Real World Connection</h2>
+                <div class="challenge-box p-4 rounded-lg">
+                    <h3 class="text-xl font-bold text-secondary-blue mb-2">Cerita Kontekstual: “Pedagang Jeruk 🍊”</h3>
+                    <ul class="list-disc list-inside ml-4 text-lg">
+                        <li>Ada 36 jeruk, dibagi ke 4 kantong.</li>
+                        <li>Tiap kantong ditambah 3 jeruk lagi.</li>
+                    </ul>
+                </div>
+                <p class="text-lg italic text-gray-600 mt-4">“Coba ubah cerita ini jadi kalimat matematika, lalu hitung hasilnya!” (Bukan sesi pemberian bintang)</p>
+            `
+        },
+        {
+            title: "Concept Discovery",
+            type: "text",
+            content: `
+                <h2 class="text-3xl font-bold text-primary-blue mb-6">🔍 Concept Discovery: Eksperimen Mini</h2>
+                <p class="text-xl font-medium mb-6">Bandingkan hasil dua ekspresi ini:</p>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-red-100 p-4 rounded-lg">
+                        <p class="font-bold text-red-700 text-2xl">A. (12 – 4) ÷ 2 = 4</p>
+                    </div>
+                    <div class="bg-green-100 p-4 rounded-lg">
+                        <p class="font-bold text-green-700 text-2xl">B. 12 – (4 ÷ 2) = 10</p>
+                    </div>
+                </div>
+                <p class="text-lg mt-6 font-semibold">➡️ Hasilnya beda kan? Kenapa bisa begitu?</p>
+                <p class="text-secondary-blue italic mt-4">“Urutan operasi itu seperti resep masakan — ubah urutannya, hasilnya juga beda!”</p>
+            `
+        },
+        {
+            title: "Aturan Logika Operasi (PEMDAS)",
+            type: "text",
+            content: `
+                <h2 class="text-3xl font-bold text-primary-blue mb-6">📊 Aturan Logika Operasi</h2>
+                <div class="bg-gray-100 p-6 rounded-lg shadow-md">
+                    <h3 class="text-2xl font-extrabold text-secondary-blue mb-4">📘 Urutan Operasi (PEMDAS/KU-KABATAKU):</h3>
+                    <ol class="space-y-3 text-lg font-medium ml-4">
+                        <li class="p-2 bg-primary-blue text-white rounded-md">1️⃣ <strong>KU</strong>rung (P) - Kerjakan tanda kurung dulu!</li>
+                        <li class="p-2 bg-yellow-500/90 text-white rounded-md">2️⃣ <strong>KA</strong>li (M) dan <strong>BA</strong>gi (D) - Lanjut ke × dan ÷ (dari kiri ke kanan)</li>
+                        <li class="p-2 bg-green-500/90 text-white rounded-md">3️⃣ <strong>TA</strong>mbah (A) dan <strong>KU</strong>rang (S) - Terakhir + dan – (dari kiri ke kanan)</li>
+                    </ol>
+                </div>
+                <p class="mt-6 text-xl font-semibold">🧩 Contoh: <span class="text-secondary-blue">(5 + 7)</span> × 3 – 9</p>
+                <p class="text-lg mt-2">Langkah 1: (12) × 3 – 9</p>
+                <p class="text-lg mt-1">Langkah 2: 36 – 9</p>
+                <p class="text-lg mt-1">Langkah 3: <span class="font-bold text-primary-blue">27</span></p>
+            `
+        },
+        {
+            title: "Guided Practice",
+            type: "challenge",
+            questions: [
+                { id: '9-1', text: '1. (24 ÷ 6) + (3 × 2)', hint: 'Hasil akhir: 10', inputType: 'number' },
+                { id: '9-2', text: '2. 45 – (15 ÷ 3) × 2', hint: 'Hasil akhir: 35', inputType: 'number' },
+                { id: '9-3', text: '3. 8 + (12 ÷ 4 × 3)', hint: 'Hasil akhir: 17', inputType: 'number' },
+                { id: '9-4', text: '4. (5 + 7) × 3 – 9', hint: 'Hasil akhir: 27', inputType: 'number' },
+                { id: '9-5', text: '5. (30 ÷ (5 + 1)) × 4', hint: 'Hasil akhir: 20', inputType: 'number' },
+            ],
+            content: `
+                <h2 class="text-3xl font-bold text-primary-blue mb-6">🧮 Guided Practice (Kerjakan Bersama Guru)</h2>
+                <p class="text-lg italic text-gray-600 mb-6">“Urutkan dulu, baru hitung. Gunakan tombol 'Cek Logika' untuk validasi mandiri. (Bukan sesi pemberian bintang)”</p>
+            `
+        },
+        {
+            title: "Independent Practice",
+            type: "challenge",
+            questions: [
+                { id: '10-1', text: 'Hasil: Berapa pensil yang diterima tiap teman?', hint: 'Model: (3 × 12) ÷ 4', inputType: 'number' },
+            ],
+            content: `
+                <h2 class="text-3xl font-bold text-primary-blue mb-6">🚀 Independent Practice</h2>
+                <p class="text-lg italic text-gray-600 mb-6">“Tulis dulu model matematikanya sebelum menghitung.” (Bukan sesi pemberian bintang)</p>
+                <div class="challenge-box p-4 rounded-lg mb-6">
+                    <h3 class="text-xl font-bold text-secondary-blue mb-2">🔹 Masalah Kontekstual 1 (Wajib Jawab):</h3>
+                    <p>Kamu membeli 3 kotak pensil isi 12, lalu dibagi ke 4 teman.</p>
+                </div>
+                <div class="p-4 bg-gray-100 rounded-lg">
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">🔹 Masalah Kontekstual 2 (Diskusi):</h3>
+                    <p>Di taman ada 8 bangku isi 4 anak. Jika datang 10 anak lagi, berapa kursi kosong tersisa?</p>
+                    <p class="text-sm mt-2">Modelnya: (8 × 4) – 10. (Diskusikan hasil 22).</p>
+                </div>
+            `
+        },
+        {
+            title: "Reflection",
+            type: "text",
+            content: `
+                <h2 class="text-3xl font-bold text-primary-blue mb-6">🌈 Reflection</h2>
+                <div class="space-y-4 text-gray-800 p-6 bg-purple-50 rounded-lg shadow">
+                    <p class="text-xl font-semibold mb-4">✨ Pertanyaan Refleksi:</p>
+                    <ul class="list-decimal list-inside space-y-3 ml-4">
+                        <li>Apa perbedaan antara menghitung dan memahami?</li>
+                        <li>Langkah mana yang paling membantu kamu hari ini?</li>
+                        <li>Bagaimana kamu tahu urutan mana yang dikerjakan dulu?</li>
+                    </ul>
+                </div>
+                <p class="text-lg font-extrabold text-secondary-blue italic mt-8">“Yang hebat bukan yang cepat, tapi yang logis.”</p>
+            `
+        },
+        // --- Task Reward Levels (Interactive) ---
+        {
+            title: "Task Reward Level 1",
+            type: "challenge",
+            questions: [
+                { id: '12-1', text: '1. (8 + 4) ÷ 2', inputType: 'number' },
+                { id: '12-2', text: '2. 25 – (10 ÷ 2)', inputType: 'text', disabled: true, hint: 'Hasil akhir: 20' }, // Disabled for focus
+                { id: '12-3', text: '3. 6 × (3 + 2)', inputType: 'number' },
+                { id: '12-4', text: '4. 48 ÷ (6 + 2)', inputType: 'text', disabled: true, hint: 'Hasil akhir: 6' }, // Disabled for focus
+                { id: '12-5', text: '5. (9 – 3) × 4', inputType: 'number' },
+            ],
+            content: `
+                <h2 class="text-3xl font-bold text-primary-blue mb-6">🏆 Task Reward Level 1 (Mudah-Menengah)</h2>
+                <p class="text-lg text-gray-600 mb-4">Isi hanya soal yang berlabel Bintang (⭐) untuk mendapatkan poin. Soal lain untuk diskusi.</p>
+                <p class="text-lg font-semibold text-accent-yellow mb-4"><strong>⭐ Fokus: urutkan langkah, bukan buru hasil.</strong></p>
+            `
+        },
+        {
+            title: "Task Reward Level 2",
+            type: "challenge",
+            questions: [
+                { id: '13-6', text: '6. 36 ÷ (3 × 2) + 4', inputType: 'number' },
+                { id: '13-7', text: '7. (18 – 6) ÷ 3 + 5', inputType: 'text', disabled: true, hint: 'Hasil akhir: 9' }, // Disabled for focus
+                { id: '13-8', text: '8. 45 ÷ (9 – 6) × 2', inputType: 'number' },
+                { id: '13-9', text: '9. (12 + 8) ÷ (2 + 3)', inputType: 'text', disabled: true, hint: 'Hasil akhir: 4' }, // Disabled for focus
+                { id: '13-10', text: '10. 60 – (24 ÷ 4) × 2', inputType: 'number' },
+            ],
+            content: `
+                <h2 class="text-3xl font-bold text-primary-blue mb-6">⚙️ Task Reward Level 2 (MOTS)</h2>
+                <p class="text-lg text-gray-600 mb-4">Tantangan semakin seru! Fokus pada urutan dan operasi kiri ke kanan.</p>
+                <p class="text-secondary-blue italic">Tips: Soal yang tidak memiliki tombol 'Cek Logika' adalah untuk diskusi.</p>
+            `
+        },
+        {
+            title: "Task Reward Level 3",
+            type: "challenge",
+            questions: [
+                { id: '14-11', text: '11. Berapa total adonan sekarang?', hint: 'Model: (48 ÷ 6 + 2) × 6', inputType: 'number' },
+                { id: '14-12', text: '12. Berapa skor akhir?', hint: 'Jawab dengan guru (butuh info kesalahan/bonus).', inputType: 'text', disabled: true }, // Ambiguous Q, disabled
+                { id: '14-13', text: '13. (50 – 10) ÷ (5 – 3) + 8', inputType: 'number' },
+                { id: '14-14', text: '14. 64 ÷ (4 + 4) × 3', inputType: 'number' },
+                { id: '14-15', text: '15. (25 – 5) ÷ 2 + 8', inputType: 'text', disabled: true, hint: 'Hasil akhir: 18' }, // Disabled for focus
+            ],
+            content: `
+                <h2 class="text-3xl font-bold text-primary-blue mb-6">🔥 Task Reward Level 3 (HOTS)</h2>
+                <p class="text-lg text-gray-600 mb-4">Ini adalah tantangan logika tertinggi! Fokus pada model matematika di soal cerita.</p>
+            `
+        },
+        {
+            title: "HOTS Lanjutan",
+            type: "challenge",
+            questions: [
+                { id: '15-16', text: '16. Berapa total kelereng sekarang?', hint: 'Model: (72 ÷ 9 + 3) × 9', inputType: 'number' },
+                { id: '15-17', text: '17. Jelaskan mana yang benar dan kenapa hasilnya berbeda:', hint: 'Diskusi urutan operasi: (6+3)×2 vs 6+(3×2).', inputType: 'text', disabled: true }, 
+                { id: '15-18', text: '18. Buat 2 cara berbeda untuk mendapatkan hasil 24 dari 6, 3, dan 2:', hint: 'Diskusi kreativitas operasi.', inputType: 'text', disabled: true }, 
+                { id: '15-19', text: '19. (8 × 4) ÷ (2 + 2) + 5', inputType: 'number' }, 
+                { id: '15-20', text: '20. (12 ÷ 3) + (4 × 2)', inputType: 'number' },
+            ],
+            content: `
+                <h2 class="text-3xl font-bold text-primary-blue mb-6">🧩 HOTS Lanjutan</h2>
+                <p class="text-lg text-gray-600 mb-4">Tantangan terakhir! Tunjukkan penalaran logis terbaikmu. Soal yang dapat dicek akan memberikan bintang!</p>
+            `
+        },
+        {
+            title: "Review & Discussion",
+            type: "text",
+            content: `
+                <h2 class="text-3xl font-bold text-primary-blue mb-6">💭 Review & Discussion</h2>
+                <div class="space-y-4 p-6 bg-gray-100 rounded-xl shadow-inner">
+                    <p class="text-xl font-semibold text-gray-800">🔹 Urutan operasi seperti <strong>aturan lalu lintas angka 🚦</strong></p>
+                    <p class="text-xl font-semibold text-gray-800">🔹 Kesalahan umum: lupa tanda kurung atau urutan × ÷</p>
+                    <div class="mt-4">
+                        <p class="text-lg font-bold text-secondary-blue">🔹 Ciri siswa berpikir logis:</p>
+                        <ul class="list-disc list-inside ml-6 text-gray-700">
+                            <li>Bisa menjelaskan alasan langkahnya</li>
+                            <li>Tidak takut salah, tapi mau memperbaiki</li>
+                        </ul>
+                    </div>
+                </div>
+                <p class="text-lg font-extrabold text-primary-blue italic mt-8">“Matematika itu bukan soal hasil — tapi cara berpikir.”</p>
+            `
+        },
+        {
+            title: "Halo Parents!",
+            type: "text",
+            content: `
+                <h2 class="text-3xl font-bold text-primary-blue mb-6">👨‍👩‍👧 Halo Parents!</h2>
+                <div class="p-6 bg-blue-50 rounded-lg shadow-md mb-6">
+                    <p class="text-xl font-bold text-primary-blue mb-3">Hari ini Ezra belajar:</p>
+                    <ul class="list-disc list-inside ml-4 text-lg text-gray-700">
+                        <li>Menemukan <strong>urutan logis dalam operasi campuran.</strong></li>
+                        <li>Mengubah cerita jadi model matematika.</li>
+                        <li>Melatih ketelitian dan penalaran langkah demi langkah.</li>
+                    </ul>
+                </div>
+                
+                <h3 class="2xl font-bold text-green-700 mb-3">💡 Aktivitas Di Rumah:</h3>
+                <ul class="list-disc list-inside ml-4 text-lg text-gray-700">
+                    <li>Ajak Ezra membuat 3 soal cerita logika sederhana tiap malam.</li>
+                    <li>Dorong ia menjelaskan “mengapa” sebelum menghitung.</li>
+                    <li>Rayakan setiap proses berpikirnya! 🌟</li>
+                </ul>
+            `
+        },
+        { title: "Slide Kosong", type: "text", content: `<h2 class="text-4xl text-gray-400 font-bold text-center mt-20">— SELESAI —</h2><p class="text-center mt-4 text-lg">Semua slide telah ditampilkan. Kamu siap menjadi <strong>Math Hero</strong>!</p>` },
+        { title: "Slide Kosong", type: "text", content: `<h2 class="text-4xl text-gray-400 font-bold text-center mt-20">— SELESAI —</h2><p class="text-center mt-4 text-lg">Semua slide telah ditampilkan. Kamu siap menjadi <strong>Math Hero</strong>!</p>` },
+        { title: "Slide Kosong", type: "text", content: `<h2 class="text-4xl text-gray-400 font-bold text-center mt-20">— SELESAI —</h2><p class="text-center mt-4 text-lg">Semua slide telah ditampilkan. Kamu siap menjadi <strong>Math Hero</strong>!</p>` },
+        { title: "Slide Kosong", type: "text", content: `<h2 class="text-4xl text-gray-400 font-bold text-center mt-20">— SELESAI —</h2><p class="text-center mt-4 text-lg">Semua slide telah ditampilkan. Kamu siap menjadi <strong>Math Hero</strong>!</p>` },
+        { title: "Slide Kosong", type: "text", content: `<h2 class="text-4xl text-gray-400 font-bold text-center mt-20">— SELESAI —</h2><p class="text-center mt-4 text-lg">Semua slide telah ditampilkan. Kamu siap menjadi <strong>Math Hero</strong>!</p>` },
+        { title: "Slide Kosong", type: "text", content: `<h2 class="text-4xl text-gray-400 font-bold text-center mt-20">— SELESAI —</h2><p class="text-center mt-4 text-lg">Semua slide telah ditampilkan. Kamu siap menjadi <strong>Math Hero</strong>!</p>` },
+        { title: "Slide Kosong", type: "text", content: `<h2 class="text-4xl text-gray-400 font-bold text-center mt-20">— SELESAI —</h2><p class="text-center mt-4 text-lg">Semua slide telah ditampilkan. Kamu siap menjadi <strong>Math Hero</strong>!</p>` },
+        { title: "Slide Kosong", type: "text", content: `<h2 class="text-4xl text-gray-400 font-bold text-center mt-20">— SELESAI —</h2><p class="text-center mt-4 text-lg">Semua slide telah ditampilkan. Kamu siap menjadi <strong>Math Hero</strong>!</p>` },
+        { title: "Slide Kosong", type: "text", content: `<h2 class="text-4xl text-gray-400 font-bold text-center mt-20">— SELESAI —</h2><p class="text-center mt-4 text-lg">Semua slide telah ditampilkan. Kamu siap menjadi <strong>Math Hero</strong>!</p>` },
+    ];
+
+    function updateStarDisplay() {
+        document.getElementById('star-count').textContent = logicStars;
+        
+        const starCounterElement = document.getElementById('star-counter');
+        // Check for Math Hero achievement
+        if (logicStars >= 10 && !starCounterElement.classList.contains('bg-green-500')) {
+            starCounterElement.classList.remove('bg-accent-yellow', 'text-primary-blue');
+            starCounterElement.classList.add('bg-green-500', 'text-white', 'scale-110');
+            showMessage("🎉 Selamat! Kamu adalah <strong>Math Hero!</strong> Kumpulkan 10 bintang!", 'success');
+        }
+    }
+
+    function showMessage(msg, type = 'info') {
+        // Simple message box implementation instead of alert()
+        const slideArea = document.getElementById('slide-area');
+        let messageBox = document.getElementById('message-box');
+        if (!messageBox) {
+            messageBox = document.createElement('div');
+            messageBox.id = 'message-box';
+            messageBox.className = 'fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-6 rounded-xl shadow-2xl z-50 transition-all duration-300 ease-in-out font-bold text-center';
+            slideArea.parentElement.appendChild(messageBox);
+        }
+
+        let bgColor, textColor;
+        if (type === 'success') {
+            bgColor = 'bg-green-600';
+            textColor = 'text-white';
+        } else if (type === 'error') {
+            bgColor = 'bg-red-600';
+            textColor = 'text-white';
+        } else {
+            bgColor = 'bg-blue-600';
+            textColor = 'text-white';
+        }
+
+        messageBox.className = `fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-6 rounded-xl shadow-2xl z-50 transition-all duration-300 ease-in-out font-bold text-center ${bgColor} ${textColor}`;
+        messageBox.innerHTML = msg;
+        messageBox.style.opacity = '1';
+        messageBox.style.display = 'block';
+
+        setTimeout(() => {
+            messageBox.style.opacity = '0';
+            setTimeout(() => messageBox.style.display = 'none', 300);
+        }, 3000);
+    }
+
+    function renderChallenge(slide) {
+        let challengeHTML = slide.content;
+        
+        challengeHTML += '<div id="challenge-form" class="mt-8 space-y-4">';
+        
+        slide.questions.forEach(q => {
+            const isInteractive = q.inputType === 'number';
+            const inputId = `input-${q.id}`;
+            const buttonId = `check-btn-${q.id}`;
+            
+            challengeHTML += `
+                <div class="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-4 p-4 rounded-lg ${isInteractive ? 'bg-white shadow-md' : 'bg-gray-100'}">
+                    <span class="font-semibold w-full sm:w-1/2">${q.text} <span class="text-sm text-gray-500 italic">${q.hint || ''}</span></span>
+                    <input type="${q.inputType}" id="${inputId}" placeholder="Jawaban..." class="p-2 border rounded-lg w-full sm:w-1/4 ${isInteractive ? 'border-secondary-blue' : 'bg-gray-200 cursor-not-allowed'}" ${isInteractive ? '' : 'disabled'}>
+                    ${isInteractive ? 
+                        `<button id="${buttonId}" onclick="checkAnswer('${q.id}')" class="px-4 py-2 bg-green-500 text-white font-bold rounded-lg hover:bg-green-600 transition duration-150 w-full sm:w-auto">
+                            Cek Logika
+                        </button>` : 
+                        `<span class="px-4 py-2 text-sm text-gray-500 w-full sm:w-auto">Diskusi</span>`
+                    }
+                    <span id="result-${q.id}" class="w-full sm:w-1/4 text-center font-bold"></span>
+                </div>
+            `;
+        });
+
+        challengeHTML += '</div>';
+        return challengeHTML;
+    }
+
+    window.checkAnswer = function(questionId) {
+        const inputElement = document.getElementById(`input-${questionId}`);
+        const resultElement = document.getElementById(`result-${questionId}`);
+        const buttonElement = document.getElementById(`check-btn-${questionId}`);
+        const userAnswer = parseInt(inputElement.value.trim());
+        const correctAnswer = CHALLENGE_ANSWERS[questionId];
+
+        if (isNaN(userAnswer)) {
+            showMessage("Masukkan angka valid, Detektif!", 'error');
+            return;
+        }
+
+        if (userAnswer === correctAnswer) {
+            if (buttonElement.disabled) return; // Already answered
+
+            const currentSlide = slides[currentSlideIndex];
+            // Award stars only for "Task Reward" or "HOTS Lanjutan" (Slides 12, 13, 14, 15)
+            const isStarSlide = currentSlide.title.includes("Task Reward") || currentSlide.title.includes("HOTS Lanjutan");
+            
+            let message = `BENAR! Jawaban: ${correctAnswer}. Logika Bekerja!`;
+            let resultText = 'BENAR!';
+
+            if (isStarSlide) {
+                logicStars++;
+                updateStarDisplay();
+                message += " ⭐ +1 Bintang!";
+                resultText = '⭐ BENAR! +1 Bintang!';
+            }
+
+            showMessage(message, 'success');
+            
+            resultElement.innerHTML = resultText;
+            resultElement.classList.remove('text-red-600');
+            resultElement.classList.add('text-green-600', 'star-icon');
+            
+            buttonElement.disabled = true;
+            buttonElement.classList.remove('bg-green-500', 'hover:bg-green-600');
+            buttonElement.classList.add('bg-gray-400', 'cursor-not-allowed');
+            inputElement.disabled = true;
+
+        } else {
+            resultElement.innerHTML = '❌ SALAH. Coba lagi!';
+            resultElement.classList.remove('text-green-600');
+            resultElement.classList.add('text-red-600');
+            showMessage("SALAH. Periksa urutan operasimu lagi!", 'error');
+        }
+    }
+
+
+    function renderSlide(index) {
+        const slide = slides[index];
+        const slideArea = document.getElementById('slide-area');
+        slideArea.style.opacity = '0'; // Start fade out
+
+        setTimeout(() => {
+            let contentHTML = '';
+
+            if (slide.type === 'challenge') {
+                contentHTML = renderChallenge(slide);
+            } else {
+                contentHTML = slide.content;
+            }
+
+            slideArea.innerHTML = contentHTML;
+            document.getElementById('slide-indicator').textContent = `Slide ${index + 1} dari ${totalSlides}`;
+            document.querySelector('header h1').textContent = `Presentasi: ${slide.title}`;
+
+            // Update navigation buttons
+            document.getElementById('prev-btn').disabled = index === 0;
+            document.getElementById('next-btn').disabled = index === slides.length - 1;
+
+            slideArea.style.opacity = '1'; // Fade in
+        }, 300); // Wait for fade out to complete
+    }
+
+    window.nextSlide = function() {
+        if (currentSlideIndex < slides.length - 1) {
+            currentSlideIndex++;
+            renderSlide(currentSlideIndex);
+        }
+    }
+
+    window.prevSlide = function() {
+        if (currentSlideIndex > 0) {
+            currentSlideIndex--;
+            renderSlide(currentSlideIndex);
+        }
+    }
+
+    // Initial load
+    window.onload = function() {
+        // We only render up to the number of slides defined in the original outline (20 slides, index 0 to 19)
+        slides.splice(20); 
+        renderSlide(currentSlideIndex);
+        updateStarDisplay();
+    };
+
+</script>
+
+</body>
+</html>
