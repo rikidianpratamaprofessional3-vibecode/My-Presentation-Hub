@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Misi Chef Ezra: Resep Pecahan</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+            transition: background-color 0.3s ease;
+        }
+        .slide-container {
+            min-height: calc(100vh - 80px); /* Adjust for header/footer */
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        .slide-content h1 {
+            border-bottom: 3px solid #6366f1; /* Indigo 500 */
+            padding-bottom: 10px;
+        }
+        .slide-content h2 {
+            color: #4f46e5; /* Indigo 600 */
+            margin-top: 15px;
+        }
+        .task-list li {
+            margin-bottom: 8px;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+        .task-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #10b981; /* Emerald 500 */
+            font-weight: bold;
+        }
+        .pbl-card {
+            border-left: 5px solid #10b981;
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-8">
+
+    <!-- HEADER & STATUS BAR -->
+    <header class="text-center mb-6">
+        <div class="text-xl font-bold text-indigo-700">Misi Chef Ezra: Resep Pecahan (PBL)</div>
+        <div class="text-sm text-gray-500 mt-1">Slide <span id="slide-number">1</span> / 24</div>
+    </header>
+
+    <!-- SLIDE DISPLAY AREA -->
+    <main id="slide-display" class="bg-white rounded-xl p-6 sm:p-10 slide-container transition-opacity duration-500">
+        <!-- Slide content will be injected here -->
+    </main>
+
+    <!-- NAVIGATION CONTROLS -->
+    <footer class="mt-8 flex justify-between">
+        <button onclick="prevSlide()" id="prev-btn" class="flex items-center px-4 py-2 bg-gray-300 text-gray-700 font-semibold rounded-full shadow-md hover:bg-gray-400 transition duration-200 disabled:opacity-50" disabled>
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+            Kembali
+        </button>
+        <button onclick="nextSlide()" id="next-btn" class="flex items-center px-4 py-2 bg-indigo-600 text-white font-semibold rounded-full shadow-lg hover:bg-indigo-700 transition duration-200 disabled:opacity-50">
+            Lanjut
+            <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+        </button>
+    </footer>
+
+    <script>
+        let currentSlideIndex = 0;
+        const slideDisplay = document.getElementById('slide-display');
+        const slideNumberElement = document.getElementById('slide-number');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+
+        // --- SLIDE DATA ARRAY (24 Slides) ---
+        const slides = [
+            // SLIDE 1: JUDUL UTAMA
+            { title: "Misi Chef Ezra: Resep Pecahan", content: `
+                <h1 class="text-3xl font-extrabold text-indigo-700 mb-4">🧑‍🍳 Misi Chef Ezra: Resep Pecahan</h1>
+                <h2 class="text-xl font-semibold text-gray-600 mb-6">Memperbesar Resep dengan Perkalian Pecahan</h2>
+                <p class="text-lg text-gray-700 bg-indigo-100 p-3 rounded-lg border-l-4 border-indigo-500">
+                    💡 <strong>Tema</strong>: Perkalian Pecahan dengan Bilangan Asli<br>
+                    <strong>Grade</strong>: 6
+                </p>
+                <div class="mt-8 text-center">
+                    <span class="text-6xl" role="img" aria-label="Chef Icons">🎂🍴⚖️</span>
+                </div>
+            `},
+            // SLIDE 2: IDENTITAS & TUJUAN
+            { title: "Identitas & Tujuan Misi", content: `
+                <h1 class="text-3xl font-bold mb-6">👤 Profil Chef Muda & Target Misi</h1>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <h2 class="text-xl font-semibold text-indigo-600">Profil Siswa</h2>
+                        <ul class="list-disc ml-6 space-y-2 text-gray-700">
+                            <li><strong>Nama Siswa</strong>: Ezra</li>
+                            <li><strong>Grade Level</strong>: 6</li>
+                            <li><strong>Bahasa</strong>: Bilingual (Indonesia & Inggris)</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-semibold text-green-600">🎯 Tujuan Misi</h2>
+                        <ol class="list-decimal ml-6 space-y-2 text-gray-700 font-medium">
+                            <li>Mengalikan pecahan dengan bilangan asli menggunakan <strong>model visual</strong>.</li>
+                            <li>Menyelesaikan <strong>soal cerita</strong> resep masakan.</li>
+                            <li>Menjadi <strong>Chef Kritis & Kreatif</strong> dalam memecahkan masalah.</li>
+                        </ol>
+                    </div>
+                </div>
+            `},
+            // SLIDE 3: ATURAN MAIN (PBL)
+            { title: "Aturan Main", content: `
+                <h1 class="text-3xl font-bold mb-6">🗺️ Aturan Main: Alur Chef Kritis (PBL)</h1>
+                <div class="space-y-4">
+                    <div class="pbl-card bg-white p-4 rounded-lg shadow">
+                        <span class="text-xl font-bold text-indigo-600">1. Kasus Awal</span>: Menerima resep yang harus diperbanyak. <br>
+                        <span class="text-sm text-gray-500">Peran: <strong>Detective</strong> resep.</span>
+                    </div>
+                    <div class="pbl-card bg-white p-4 rounded-lg shadow">
+                        <span class="text-xl font-bold text-indigo-600">2. Investigasi</span>: Menggunakan model visual (PhET) untuk mencari pola. <br>
+                        <span class="text-sm text-gray-500">Peran: <strong>Ilmuwan</strong> pecahan.</span>
+                    </div>
+                    <div class="pbl-card bg-white p-4 rounded-lg shadow">
+                        <span class="text-xl font-bold text-indigo-600">3. Solusi Kreatif</span>: Menyelesaikan soal cerita dan menciptakan solusi. <br>
+                        <span class="text-sm text-gray-500">Peran: <strong>Master Chef</strong> matematika.</span>
+                    </div>
+                </div>
+                <p class="mt-6 text-center text-lg font-semibold text-yellow-700">
+                    🎁 <strong>Reward System</strong>: Setiap solusi tepat akan mendapatkan *'Chef Star'*!
+                </p>
+            `},
+            // SLIDE 4: FOKUS HARI INI (DIFFERENTIATION)
+            { title: "Fokus & Ketelitian", content: `
+                <h1 class="text-3xl font-bold mb-6">⚠️ Stop! Fokus & Ketelitian</h1>
+                <h2 class="text-2xl font-semibold text-red-600">🎯 Tantangan Spesial: Periksa Ulang!</h2>
+                <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-lg mt-4 space-y-3">
+                    <p class="text-gray-700 text-lg">Perkalian pecahan sangat mudah, tetapi rawan salah hitung. Kita harus mengatasi tantangan <strong>fokus</strong>!</p>
+                    <ul class="list-disc ml-6 text-gray-800 font-medium space-y-1">
+                        <li><strong>Fokus 1</strong>: Bilangan asli hanya mengalikan <strong>PEMBILANG</strong> (angka atas).</li>
+                        <li><strong>Fokus 2</strong>: <strong>Teliti</strong> saat mengubah hasil pecahan tak wajar ($\frac{7}{2}$) menjadi pecahan campuran ($3\frac{1}{2}$).</li>
+                    </ul>
+                </div>
+                <p class="mt-6 text-lg text-center text-red-700 font-bold">
+                    📝 <em>Catatan</em>: <em>Double check</em> perhitunganmu di setiap tantangan!
+                </p>
+            `},
+            // SLIDE 5: TIMELINE MISI
+            { title: "Timeline Misi", content: `
+                <h1 class="text-3xl font-bold mb-6">⏳ Peta Misi (90 Menit)</h1>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full bg-white border border-gray-200 rounded-lg">
+                        <thead class="bg-indigo-100">
+                            <tr>
+                                <th class="py-2 px-4 border-b">Tahap Misi</th>
+                                <th class="py-2 px-4 border-b">Durasi</th>
+                                <th class="py-2 px-4 border-b">Tujuan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="hover:bg-gray-50"><td><strong>1. Warm-up</strong></td><td class="text-center">10 min</td><td>Cek Superpower Pecahan.</td></tr>
+                            <tr class="hover:bg-gray-50"><td><strong>2. Launch</strong></td><td class="text-center">15 min</td><td>Menetapkan Masalah Resep.</td></tr>
+                            <tr class="hover:bg-gray-50 bg-green-50"><td><strong>3. Concept</strong></td><td class="text-center">20 min</td><td>Visualisasi & Rumus Rahasia.</td></tr>
+                            <tr class="hover:bg-gray-50"><td><strong>4. Guided Practice</strong></td><td class="text-center">15 min</td><td>Latihan Resep Bersama.</td></tr>
+                            <tr class="hover:bg-gray-50"><td><strong>5. Independent Practice</strong></td><td class="text-center">15 min</td><td>Misi Solo (Soal Cerita).</td></tr>
+                            <tr class="hover:bg-gray-50 bg-yellow-50"><td><strong>6. Reflection</strong></td><td class="text-center">15 min</td><td>Kesimpulan & Task Reward.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            `},
+            // SLIDE 6: KEY HIGHLIGHTS
+            { title: "Key Highlights", content: `
+                <h1 class="text-3xl font-bold mb-6">✨ Highlight yang Akan Dipelajari</h1>
+                <div class="grid sm:grid-cols-3 gap-6 text-center">
+                    <div class="p-4 bg-purple-100 rounded-lg shadow-md">
+                        <span class="text-4xl">🖼️</span>
+                        <h3 class="font-bold mt-2 text-indigo-700">Model Visual</h3>
+                        <p class="text-sm text-gray-700">Kenapa $\times$ pecahan itu sama dengan $+$ berulang.</p>
+                    </div>
+                    <div class="p-4 bg-teal-100 rounded-lg shadow-md">
+                        <span class="text-4xl">🍰</span>
+                        <h3 class="font-bold mt-2 text-indigo-700">Kontekstual</h3>
+                        <p class="text-sm text-gray-700">Menghitung kebutuhan bahan baku resep nyata.</p>
+                    </div>
+                    <div class="p-4 bg-yellow-100 rounded-lg shadow-md">
+                        <span class="text-4xl">🧠</span>
+                        <h3 class="font-bold mt-2 text-indigo-700">Bernalar Kritis</h3>
+                        <p class="text-sm text-gray-700">Menganalisis kesalahan dan mencari solusi terbaik.</p>
+                    </div>
+                </div>
+                <div class="mt-8 text-center text-lg font-medium text-gray-600">
+                    <p>Kita akan menjadi <strong>Master Chef Matematika</strong> yang teliti!</p>
+                </div>
+            `},
+            // SLIDE 7: DIAGNOSTIC WARM-UP (CONTINUED)
+            { title: "Diagnostic Warm-up", content: `
+                <h1 class="text-3xl font-bold mb-6">⚡ Warm-up Challenge</h1>
+                <h2 class="text-xl font-semibold mb-4">Aktivitas: Cek Superpower Pecahan</h2>
+                <div class="bg-blue-50 p-6 rounded-lg shadow-inner space-y-4">
+                    <p class="text-2xl font-bold text-indigo-700">Soal 1: Penjumlahan Berulang</p>
+                    <p class="text-3xl text-center font-extrabold text-gray-800">
+                        $$\frac{1}{4} + \frac{1}{4} = \text{ ? }$$
+                    </p>
+                    <p class="text-2xl font-bold text-indigo-700">Soal 2: Visualisasi</p>
+                    <p class="text-xl text-gray-700">
+                        Bagaimana bentuk pecahan $\frac{3}{5}$? Coba tunjukkan dengan membagi pizza atau menggunakan alat visual.
+                    </p>
+                </div>
+                <div class="mt-6 text-center text-sm text-gray-500">
+                    *Gunakan Toytheater Fractions untuk visualisasi*
+                </div>
+            `},
+            // SLIDE 8: INTRODUCTION & REAL WORLD CONNECTION (KASUS)
+            { title: "Masalah Awal Chef", content: `
+                <h1 class="text-3xl font-bold mb-6">🍰 Tantangan Resep Awal</h1>
+                <h2 class="text-2xl font-semibold text-green-600">Kasus: Memperbanyak Kue</h2>
+                <div class="bg-green-50 border-l-4 border-green-500 p-5 rounded-lg text-lg space-y-3">
+                    <p class="font-medium">Mama Ezra ingin membuat <strong>3 loyang kue</strong>.</p>
+                    <p class="font-bold">Setiap loyang butuh $\frac{1}{2}$ cup gula.</p>
+                    <p class="mt-4 text-xl text-indigo-700 font-extrabold">
+                        ❓ Berapa total gula yang dibutuhkan? Tuliskan dalam kalimat matematika!
+                    </p>
+                    <div class="text-center mt-4">
+                        <span class="text-4xl">3 $\times$ $\frac{1}{2}$ = ?</span>
+                    </div>
+                </div>
+                <p class="mt-6 text-gray-600 italic">
+                    (Ingat, perkalian adalah penjumlahan berulang!)
+                </p>
+            `},
+            // SLIDE 9: CONCEPT INTRO 1 (VISUAL MODEL)
+            { title: "Investigasi Visual", content: `
+                <h1 class="text-3xl font-bold mb-6">🖼️ Concept Intro 1: Model Area</h1>
+                <h2 class="text-2xl font-semibold text-indigo-600">3 kali $\frac{1}{2}$</h2>
+                <div class="bg-indigo-50 p-5 rounded-lg text-center">
+                    <p class="text-xl font-medium mb-3">Lihatlah visualisasi ini:</p>
+                    <p class="text-4xl mb-4">
+                        [Arsir $\frac{1}{2}$] + [Arsir $\frac{1}{2}$] + [Arsir $\frac{1}{2}$]
+                    </p>
+                    <div class="flex justify-center space-x-4">
+                        <span class="text-5xl" role="img">🍕</span>
+                        <span class="text-5xl">🍕</span>
+                        <span class="text-5xl">🍕</span>
+                    </div>
+                    <p class="mt-4 text-lg font-semibold text-gray-700">
+                        Jika kita gabungkan 3 potong setengah pizza, kita mendapatkan $\frac{3}{2}$!
+                    </p>
+                </div>
+                <div class="mt-6 text-center text-sm text-gray-600">
+                    *Gunakan PhET untuk memindahkan kepingan pecahan*
+                </div>
+            `},
+            // SLIDE 10: CONCEPT INTRO 2 (RUMUS)
+            { title: "Rumus Rahasia", content: `
+                <h1 class="text-3xl font-bold mb-6">🔑 Concept Intro 2: Menemukan Rumus</h1>
+                <h2 class="text-2xl font-semibold text-green-600">Pola Angka di Balik Gambar</h2>
+                <div class="bg-white p-5 rounded-lg shadow-xl">
+                    <div class="text-center text-3xl font-bold mb-4">
+                        $3 \times \frac{1}{2} = \frac{1}{2} + \frac{1}{2} + \frac{1}{2} = \frac{3}{2}$
+                    </div>
+                    <div class="border-t pt-4">
+                        <p class="text-xl font-semibold text-indigo-700 mb-2">Aturan Perkalian Pecahan:</p>
+                        <div class="bg-indigo-100 p-4 rounded-lg text-center text-2xl font-extrabold">
+                            $$a \times \frac{b}{c} = \frac{a \times b}{c}$$
+                        </div>
+                        <p class="mt-3 text-lg text-gray-700">
+                            Bilangan asli ($a$) HANYA dikalikan dengan pembilang ($b$). Penyebut ($c$) tetap sama!
+                        </p>
+                    </div>
+                </div>
+            `},
+            // SLIDE 11: CONCEPT INTRO 3 (PECAHAN CAMPURAN)
+            { title: "Sederhanakan Hasil", content: `
+                <h1 class="text-3xl font-bold mb-6">🔄 Concept Intro 3: Pecahan Campuran</h1>
+                <h2 class="text-2xl font-semibold text-purple-600">Total Gula: $\frac{3}{2}$ cup</h2>
+                <div class="bg-purple-50 p-5 rounded-lg space-y-4">
+                    <p class="text-xl font-medium text-gray-700">
+                        $\frac{3}{2}$ adalah pecahan tak wajar (Pembilang > Penyebut). Di resep, ini harus disederhanakan!
+                    </p>
+                    <div class="text-center text-3xl font-bold text-gray-800">
+                        $$\frac{3}{2} = 3 \div 2$$
+                    </div>
+                    <ul class="list-disc ml-6 text-lg text-gray-800 space-y-1">
+                        <li>$3 \div 2 = 1$ sisa $1$.</li>
+                        <li>Hasilnya: $1 \frac{1}{2}$ (Satu setengah cup).</li>
+                    </ul>
+                    <p class="text-xl font-bold text-center text-red-600">
+                        <strong>⚠️ Selalu cek sisa pembagian untuk ketelitian!</strong>
+                    </p>
+                </div>
+            `},
+            // SLIDE 12: GUIDED PRACTICE 1 (KASUS 2)
+            { title: "Guided Practice", content: `
+                <h1 class="text-3xl font-bold mb-6">📝 Guided Practice: Resep Cokelat</h1>
+                <h2 class="text-2xl font-semibold text-indigo-600">Tantangan Resep Kedua</h2>
+                <div class="bg-yellow-50 border-l-4 border-yellow-500 p-5 rounded-lg text-lg space-y-3">
+                    <p class="font-medium">Sebuah resep membutuhkan $\frac{2}{3}$ cup cokelat bubuk.</p>
+                    <p class="font-bold">Jika Mama membuat <strong>4 resep</strong> yang sama,</p>
+                    <p class="mt-4 text-xl text-indigo-700 font-extrabold">
+                        ❓ Tuliskan kalimat matematika dan hitung total cokelat bubuk!
+                    </p>
+                    <div class="text-center mt-4">
+                        <span class="text-4xl">4 $\times$ $\frac{2}{3}$ = ?</span>
+                    </div>
+                </div>
+            `},
+            // SLIDE 13: GUIDED PRACTICE 2 (SOLUSI)
+            { title: "Langkah Solusi Resep Cokelat", content: `
+                <h1 class="text-3xl font-bold mb-6">🛠️ Langkah Solusi (Cek Ketelitian!)</h1>
+                <div class="space-y-4">
+                    <div class="bg-green-100 p-4 rounded-lg">
+                        <p class="text-xl font-bold text-green-700">Langkah 1: Kalikan Pembilang</p>
+                        <p class="text-2xl text-center font-extrabold">$$4 \times \frac{2}{3} = \frac{4 \times 2}{3} = \frac{8}{3}$$</p>
+                    </div>
+                    <div class="bg-blue-100 p-4 rounded-lg">
+                        <p class="text-xl font-bold text-blue-700">Langkah 2: Sederhanakan ke Pecahan Campuran</p>
+                        <p class="text-2xl text-center font-extrabold">$$\frac{8}{3} = 8 \div 3$$</p>
+                        <p class="text-lg text-center">
+                            $8 \div 3 = 2$ sisa $2$.
+                        </p>
+                    </div>
+                    <div class="bg-indigo-100 p-4 rounded-lg">
+                        <p class="text-xl font-bold text-indigo-700">Final Answer</p>
+                        <p class="text-3xl text-center font-extrabold">$$2\frac{2}{3}$$ cup cokelat bubuk</p>
+                    </div>
+                </div>
+            `},
+            // SLIDE 14: INDEPENDENT PRACTICE (THE RUNNER)
+            { title: "Misi Solo: Pelari Kritis", content: `
+                <h1 class="text-3xl font-bold mb-6">🏃 Independent Practice: Misi Solo</h1>
+                <h2 class="text-2xl font-semibold text-red-600">Soal Cerita: The Runner</h2>
+                <div class="bg-red-50 border-l-4 border-red-500 p-5 rounded-lg text-lg space-y-3">
+                    <p>Seorang pelari mengelilingi lintasan sejauh $\frac{3}{5}$ km setiap pagi.</p>
+                    <p>Berapa total jarak yang ia tempuh jika ia berlari selama <strong>5 hari</strong> berturut-turut?</p>
+                    <p class="font-bold mt-3">Tuliskan dalam bentuk pecahan campuran!</p>
+                </div>
+                <div class="mt-6 text-center">
+                    <span class="text-5xl font-extrabold text-red-700">⏱️ 5 Menit!</span>
+                    <p class="text-lg text-gray-600">Gunakan fokus penuh untuk misi ini!</p>
+                </div>
+            `},
+            // SLIDE 15: CONSOLIDATION (RINGKASAN)
+            { title: "Consolidation", content: `
+                <h1 class="text-3xl font-bold mb-6">✅ Konsolidasi: Tiga Aturan Emas</h1>
+                <h2 class="text-2xl font-semibold text-teal-600">Apa yang Kita Pelajari Hari Ini?</h2>
+                <div class="space-y-4">
+                    <div class="p-4 bg-teal-100 rounded-lg">
+                        <p class="text-xl font-bold text-teal-700">Emas 1: Definisi</p>
+                        <p class="text-lg text-gray-700">Perkalian pecahan adalah <strong>penjumlahan berulang</strong> dari pecahan itu.</p>
+                    </div>
+                    <div class="p-4 bg-teal-100 rounded-lg">
+                        <p class="text-xl font-bold text-teal-700">Emas 2: Prosedur</p>
+                        <p class="text-lg text-gray-700">Bilangan asli hanya mengalikan <strong>PEMBILANG</strong>. Penyebut TIDAK berubah.</p>
+                    </div>
+                    <div class="p-4 bg-teal-100 rounded-lg">
+                        <p class="text-xl font-bold text-teal-700">Emas 3: Penyelesaian</p>
+                        <p class="text-lg text-gray-700">Jika hasilnya pecahan tak wajar, <strong>selalu ubah</strong> menjadi pecahan campuran!</p>
+                    </div>
+                </div>
+            `},
+            // SLIDE 16: REFLEKSI KRITIS
+            { title: "Refleksi", content: `
+                <h1 class="text-3xl font-bold mb-6">🧠 Refleksi Chef Kritis & Kreatif</h1>
+                <h2 class="text-2xl font-semibold text-indigo-600">Profil Pelajar Pancasila</h2>
+                <div class="space-y-4 text-lg text-gray-700">
+                    <p class="font-medium text-indigo-700">1. Bernalar Kritis:</p>
+                    <p class="ml-4">"Bagian mana dari pelajaran hari ini yang membuatmu harus berpikir sangat hati-hati (critical thinking)?"</p>
+
+                    <p class="font-medium text-indigo-700">2. Kreatif:</p>
+                    <p class="ml-4">"Apa ide paling kreatifmu hari ini, misalnya dalam memvisualisasikan pecahan?"</p>
+
+                    <p class="font-medium text-red-700">3. Fokus:</p>
+                    <p class="ml-4">"Satu hal yang akan kamu lakukan untuk meningkatkan <strong>ketelitian</strong> di misi berikutnya?"</p>
+                </div>
+            `},
+            // SLIDE 17: TASK REWARD LEVEL 1
+            { title: "Task Reward Level 1", content: `
+                <h1 class="text-3xl font-bold mb-6">🎁 Task Reward: Level 1 - Dasar Resep</h1>
+                <h2 class="text-2xl font-semibold text-green-600">5 Soal Mudah & Menengah (Konsep Dasar)</h2>
+                <ol class="list-decimal ml-6 text-lg task-list">
+                    <li>Hitung hasil dari $5 \times \frac{1}{6}$.</li>
+                    <li>Hitung hasil dari $3 \times \frac{2}{5}$.</li>
+                    <li>Gambarlah model area (kotak/lingkaran) untuk $4 \times \frac{1}{3}$.</li>
+                    <li>Sederhanakan $\frac{7}{2}$ menjadi pecahan campuran.</li>
+                    <li>Ibu membeli $\frac{1}{4}$ kg kopi. Jika ayah membeli 3 kali lipatnya, berapa kg kopi seluruhnya?</li>
+                </ol>
+            `},
+            // SLIDE 18: TASK REWARD LEVEL 2 PART 1
+            { title: "Task Reward Level 2 (Part 1)", content: `
+                <h1 class="text-3xl font-bold mb-6">🧠 Task Reward: Level 2 (MOTS)</h1>
+                <h2 class="text-2xl font-semibold text-yellow-600">3 Soal Chef Menengah (Aplikasi Konsep)</h2>
+                <ol class="list-decimal ml-6 text-lg task-list" start="1">
+                    <li>Tuliskan $\frac{1}{8} + \frac{1}{8} + \frac{1}{8} + \frac{1}{8} + \frac{1}{8}$ dalam bentuk perkalian, lalu hitung hasilnya.</li>
+                    <li>Jika $A \times \frac{3}{7} = \frac{15}{7}$, berapakah nilai bilangan asli $A$?</li>
+                    <li>Pak Tani memanen $\frac{4}{5}$ karung beras. Ia membawa 6 karung beras sebanyak itu. Berapa total karung beras yang dipanen? (Jawab dalam pecahan campuran).</li>
+                </ol>
+                <p class="mt-6 text-sm text-gray-500">
+                    *Lanjutkan di slide berikutnya...*
+                </p>
+            `},
+            // SLIDE 19: TASK REWARD LEVEL 2 PART 2
+            { title: "Task Reward Level 2 (Part 2)", content: `
+                <h1 class="text-3xl font-bold mb-6">🧠 Task Reward: Level 2 (MOTS) Lanjutan</h1>
+                <h2 class="text-2xl font-semibold text-yellow-600">2 Soal Chef Menengah</h2>
+                <ol class="list-decimal ml-6 text-lg task-list" start="4">
+                    <li>Sebuah tali memiliki panjang $\frac{2}{9}$ meter. Jika ada 7 tali dengan panjang yang sama, berapa panjang total semua tali?</li>
+                    <li>Sebuah resep membutuhkan $\frac{3}{4}$ sendok teh garam. Jika resep itu diperbesar 5 kali, berapa banyak garam yang dibutuhkan?</li>
+                </ol>
+                <p class="mt-6 text-center text-xl font-bold text-red-600">
+                    ⚠️ <strong>Ingat untuk mengkonversi pecahan tak wajar!</strong>
+                </p>
+            `},
+            // SLIDE 20: TASK REWARD LEVEL 3 PART 1
+            { title: "Task Reward Level 3 (Part 1)", content: `
+                <h1 class="text-3xl font-bold mb-6">🚀 Task Reward: Level 3 (HOTS)</h1>
+                <h2 class="text-2xl font-semibold text-red-600">3 Soal Master Chef (Analisis & Kreasi)</h2>
+                <ol class="list-decimal ml-6 text-lg task-list" start="1">
+                    <li><strong>Analisis Kesalahan</strong>: Amir menghitung $4 \times \frac{2}{5}$ dan mendapat $\frac{8}{20}$. Jelaskan di mana letak kesalahannya dan berikan jawaban yang benar. (Bernalar Kritis)</li>
+                    <li><strong>Soal Kreasi</strong>: Buatlah satu soal cerita nyata (selain resep) yang menggunakan operasi $6 \times \frac{1}{4}$. Tuliskan soal, solusi, dan jawabannya. (Kreatif)</li>
+                    <li><strong>Penerapan Campuran</strong>: Setiap hari, Rina menghabiskan $1\frac{1}{2}$ jam untuk bermain piano. Jika ia bermain selama 4 hari, berapa total waktu (dalam jam) yang ia habiskan?</li>
+                </ol>
+            `},
+            // SLIDE 21: TASK REWARD LEVEL 3 PART 2
+            { title: "Task Reward Level 3 (Part 2)", content: `
+                <h1 class="text-3xl font-bold mb-6">🚀 Task Reward: Level 3 (HOTS) Lanjutan</h1>
+                <h2 class="text-2xl font-semibold text-red-600">2 Soal Master Chef</h2>
+                <ol class="list-decimal ml-6 text-lg task-list" start="4">
+                    <li>Tentukanlah 3 bilangan asli berbeda ($A$, $B$, $C$) yang memenuhi persamaan $A \times \frac{1}{5} = B \times \frac{2}{5} = C \times \frac{3}{5}$. (Bernalar Kritis)</li>
+                    <li>Seekor tikus makan $\frac{1}{10}$ bagian keju setiap hari. Berapa hari yang dibutuhkan tikus untuk memakan 3 keju utuh?</li>
+                </ol>
+                <p class="mt-6 text-center text-sm text-gray-500">
+                    *Selesaikan semua 15 soal untuk menjadi Master Chef!*
+                </p>
+            `},
+            // SLIDE 22: ASSESSMENT CRITERIA
+            { title: "Assessment Criteria", content: `
+                <h1 class="text-3xl font-bold mb-6">📊 Kriteria Penilaian Misi</h1>
+                <h2 class="text-xl font-semibold text-indigo-600">Target Pencapaian (LKPD $\ge$ 75%)</h2>
+                <div class="space-y-4">
+                    <div class="p-3 bg-gray-100 rounded-lg shadow">
+                        <span class="text-2xl">🌱 <strong>Emerging</strong></span>: Menjawab 60-70% soal Level 1 dengan benar.
+                    </div>
+                    <div class="p-3 bg-yellow-100 rounded-lg shadow">
+                        <span class="text-2xl">🌿 <strong>Developing</strong></span>: Menguasai Level 1 + mampu menyelesaikan 3/5 soal MOTS.
+                    </div>
+                    <div class="p-3 bg-green-100 rounded-lg shadow">
+                        <span class="text-2xl">🌳 <strong>Proficient</strong></span>: Menguasai semua level + menjawab 3/5 soal HOTS dengan penalaran jelas.
+                    </div>
+                </div>
+            `},
+            // SLIDE 23: PARENT REMINDER
+            { title: "Halo Parents!", content: `
+                <h1 class="text-3xl font-bold mb-6">👨‍👩‍👧 Halo Parents!</h1>
+                <p class="text-lg mb-4">Hari ini <strong>Ezra</strong> belajar tentang <strong>Perkalian Pecahan dengan Bilangan Asli</strong> dengan metode <strong>PBL</strong>.</p>
+                <div class="grid md:grid-cols-2 gap-4 text-gray-700">
+                    <div class="bg-green-50 p-4 rounded-lg">
+                        <h2 class="text-xl font-bold text-green-700">✅ Yang Sudah Dikuasai:</h2>
+                        <ul class="list-disc ml-6">
+                            <li>Mengubah soal cerita menjadi kalimat matematika.</li>
+                            <li>Menggunakan model visual (penjumlahan berulang).</li>
+                        </ul>
+                    </div>
+                    <div class="bg-red-50 p-4 rounded-lg">
+                        <h2 class="text-xl font-bold text-red-700">🔄 Perlu Latihan Lebih Lanjut:</h2>
+                        <ul class="list-disc ml-6">
+                            <li><strong>Ketelitian dan Fokus</strong> saat mengkonversi pecahan tak wajar.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="mt-4 bg-indigo-50 p-4 rounded-lg">
+                    <h2 class="text-xl font-bold text-indigo-700">💡 Tips untuk di Rumah:</h2>
+                    <p>Ajak diskusi takaran resep saat memasak. Latih ketelitian dengan meminta Ezra memeriksa ulang 3 soal Task Reward.</p>
+                    <p class="mt-2 font-semibold">Mohon dampingi Ezra menyelesaikan <strong>15 soal</strong> di Task Reward.</p>
+                </div>
+                <p class="mt-4 text-center font-bold text-lg">Terima kasih atas kerjasamanya! 🙏</p>
+            `},
+            // SLIDE 24: MOTIVASI PENUTUP
+            { title: "Motivasi Penutup", content: `
+                <h1 class="text-3xl font-bold mb-6">🚀 Misi Selesai!</h1>
+                <div class="text-center p-10 bg-indigo-600 text-white rounded-xl shadow-2xl">
+                    <p class="text-4xl font-extrabold italic mb-4">
+                        "Success is not final, failure is not fatal: it is the courage to continue that counts."
+                    </p>
+                    <p class="text-2xl font-semibold">— Winston Churchill (Adaptasi)</p>
+                </div>
+                <p class="mt-8 text-center text-2xl font-bold text-indigo-800">
+                    Master Chef Ezra, kamu sudah menjadi Pemecah Masalah yang Kritis dan Kreatif! Sampai jumpa di misi berikutnya! 🎉
+                </p>
+            `}
+        ];
+
+        function renderSlide() {
+            slideDisplay.innerHTML = slides[currentSlideIndex].content;
+            slideNumberElement.textContent = currentSlideIndex + 1;
+
+            // Update navigation buttons
+            prevBtn.disabled = currentSlideIndex === 0;
+            nextBtn.disabled = currentSlideIndex === slides.length - 1;
+
+            // Accessibility: Focus on the new slide content for screen readers (optional but good practice)
+            slideDisplay.focus();
+        }
+
+        function nextSlide() {
+            if (currentSlideIndex < slides.length - 1) {
+                // Add a brief fade-out effect
+                slideDisplay.classList.remove('opacity-100');
+                slideDisplay.classList.add('opacity-0');
+                setTimeout(() => {
+                    currentSlideIndex++;
+                    renderSlide();
+                    slideDisplay.classList.remove('opacity-0');
+                    slideDisplay.classList.add('opacity-100');
+                }, 300); // Wait for fade-out transition
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlideIndex > 0) {
+                // Add a brief fade-out effect
+                slideDisplay.classList.remove('opacity-100');
+                slideDisplay.classList.add('opacity-0');
+                setTimeout(() => {
+                    currentSlideIndex--;
+                    renderSlide();
+                    slideDisplay.classList.remove('opacity-0');
+                    slideDisplay.classList.add('opacity-100');
+                }, 300); // Wait for fade-out transition
+            }
+        }
+
+        // Initialize the first slide
+        window.onload = () => {
+            renderSlide();
+        };
+
+        // Optional: Keyboard navigation (Arrow keys)
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                prevSlide();
+            }
+        });
+    </script>
+</body>
+</html>
